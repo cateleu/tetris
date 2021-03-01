@@ -1,0 +1,46 @@
+class Square {
+    field int pos;
+    field int row;
+    field int col;
+
+    constructor Square new() {
+        let pos = 0;
+        let row = 0;
+        let col = 0;
+        
+        do draw(pos);
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+    
+    method void draw(int location) {
+		do Graphics.drawBlock(location);
+        do Graphics.drawBlock(location + 1);
+        do Graphics.drawBlock(location + 512);
+        do Graphics.drawBlock(location + 513); 
+		return;
+	}
+
+    method void erase(int location) {
+		do Graphics.eraseBlock(location);
+        do Graphics.eraseBlock(location + 1);
+        do Graphics.eraseBlock(location + 512);
+        do Graphics.eraseBlock(location + 513); 
+		return;
+    }
+
+    method void drop() {
+		if (pos < 14) {
+            do erase(pos*512);
+            let pos = pos + 1;
+            do draw(pos*512);
+        }
+        return;
+    }
+
+
+}

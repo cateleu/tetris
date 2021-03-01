@@ -1,0 +1,58 @@
+class Graphics {
+
+    constructor Graphics new() {
+        return this;
+    }
+
+	function void drawBackgroundEdges() {
+		do Screen.setColor(true);
+		// 10 blocks * 16 = 160bits.
+		do Screen.drawRectangle(157, 0, 159, 255);
+		do Screen.drawRectangle(321, 0, 323, 255);
+		return;
+	}
+
+    function void drawBlock(int location) {
+        var int memAddress;
+        let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 32766);
+		do Memory.poke(memAddress + 64, 32766);
+		do Memory.poke(memAddress + 96, 32766);
+		do Memory.poke(memAddress + 128, 32766);
+		do Memory.poke(memAddress + 160, 32766);
+		do Memory.poke(memAddress + 192, 32766);
+		do Memory.poke(memAddress + 224, 32766);
+		do Memory.poke(memAddress + 256, 32766);
+		do Memory.poke(memAddress + 288, 32766);
+		do Memory.poke(memAddress + 320, 32766);
+		do Memory.poke(memAddress + 352, 32766);
+		do Memory.poke(memAddress + 384, 32766);
+		do Memory.poke(memAddress + 416, 32766);
+		do Memory.poke(memAddress + 448, 32766);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+    }
+
+    function void eraseBlock(int location) {
+		var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 0);
+		do Memory.poke(memAddress + 96, 0);
+		do Memory.poke(memAddress + 128, 0);
+		do Memory.poke(memAddress + 160, 0);
+		do Memory.poke(memAddress + 192, 0);
+		do Memory.poke(memAddress + 224, 0);
+		do Memory.poke(memAddress + 256, 0);
+		do Memory.poke(memAddress + 288, 0);
+		do Memory.poke(memAddress + 320, 0);
+		do Memory.poke(memAddress + 352, 0);
+		do Memory.poke(memAddress + 384, 0);
+		do Memory.poke(memAddress + 416, 0);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+}

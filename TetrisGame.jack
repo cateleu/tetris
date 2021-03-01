@@ -1,0 +1,94 @@
+class TetrisGame {
+    //field Square square;
+    //field Square object;
+    field Line object;
+    field int direction;   // 0=none, 1=left, 2=right, 3=rotateL, 4=rotateR, 5=dropFast
+    field int dropTimer;
+    field int dropTick;
+    
+
+    constructor TetrisGame new() {
+        //let object = Square.new();
+        let object = Line.new();
+        let direction = 0;
+        let dropTimer = 0;
+        let dropTick = 15000;
+        do Graphics.drawBackgroundEdges();
+        return this;
+    }
+
+    method void dispose() {
+        do object.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void moveObject() {
+        var char key;
+
+        if (object.isFixed()) {
+            let object = Line.new();
+            return;
+        }
+        let dropTimer = dropTimer + 1;
+        if (direction = 1) { 
+            do object.moveLeft(); 
+            let direction = 0;
+            do Sys.wait(5);  // delays the next movement
+        }
+        if (direction = 2) { 
+            do object.moveRight();
+            let direction = 0;
+            do Sys.wait(5);  // delays the next movement
+        }
+        if (direction = 3) {
+            do object.rotateLeft();
+            let direction = 0;
+            do Sys.wait(5);
+        }
+        if (direction = 4) {
+            do object.rotateRight();
+            let direction = 0;
+            do Sys.wait(5);
+        }
+        if (dropTimer > dropTick) {
+            do object.drop();
+            let dropTimer = 0;
+        }
+        return;
+    }
+
+    method void run() {
+        var char key;
+        var boolean exit;
+        let exit = false;
+
+        while (~exit) {
+            while (key = 0) {
+                let key = Keyboard.keyPressed();
+                do moveObject();
+            }
+            if (key = 81) { let exit = true; }
+
+            if (key = 130) { // left arrow
+                let direction = 1;
+            }
+            if (key = 132) { // right arrow
+                let direction = 2;
+            }
+            if (key = 65) { // 'A' rotate left
+                let direction = 3;
+            }
+            if (key = 90) { // 'Z' rotate right
+                let direction = 4;
+            }
+
+
+            while (~(key = 0)) {
+                let key = Keyboard.keyPressed();
+                do moveObject();
+            }
+        } // while
+        return;
+    }
+}

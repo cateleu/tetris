@@ -1,0 +1,168 @@
+class Line {
+    field int state;
+    field int row;
+    field int col;
+    field int screenOffset;
+
+    constructor Line new() {
+        let row = 0; // row: [0-15]
+        let col = 0; // col: [0-9]
+        let screenOffset = 10;
+        let state = 0; // 0=horizontal, 1=vertical, 4=fixed
+
+        do draw(row, col);
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void draw(int row, int col) {
+        if (state = 0) {
+            do drawHorizontal(row, col);
+        }
+        if (state = 1) {
+            do drawVertical(row, col);
+        }
+        return;
+    }
+
+    method void erase(int row, int col) {
+        if (state = 0) {
+            do eraseHorizontal(row, col);
+        }
+        if (state = 1) {
+            do eraseVertical(row, col);
+        } 
+        return;
+    }
+
+    method void moveLeft() {
+        if (col > 0) {
+            do erase(row, col);
+            let col = col - 1;
+            do draw(row, col);
+        }
+        return;
+    }
+
+    method void moveRight() {
+        var int edge;
+        if (state = 1) {
+            // vertical
+            let edge = 9;
+        }
+        if (state = 0) {
+            // horizontial
+            let edge = 6;
+        }
+
+        if (col < edge) {
+            do erase(row, col);
+            let col = col + 1;
+            do draw(row, col);
+        }
+        return;
+    }
+
+    method void rotateLeft() {
+        if (state = 0) {
+            do erase(row, col);
+            let state = 1;
+            do draw(row, col);
+            return;
+        }
+        if (state = 1) {
+            do erase(row, col);
+            let state = 0;
+            do draw(row, col);
+            return;
+        }
+        return; 
+    }
+
+    method void rotateRight() {
+        // Same for Line.
+        do rotateLeft();
+        return;
+    }
+
+    method void eraseVertical(int row, int col) {
+		var int x, y;
+		let y = (row * 512);
+		let x = col + screenOffset;
+
+		// 16bit word * 32 column = 512 bytes for one row.
+		do Graphics.eraseBlock(y + x);
+		do Graphics.eraseBlock(y + 512 + x);
+		do Graphics.eraseBlock(y + 1024 + x);
+		do Graphics.eraseBlock(y + 1536 + x);
+		return;
+	}
+
+    method void eraseHorizontal(int row, int col) {
+        var int x, y;
+		let y = (row * 512);
+		let x = col + screenOffset;
+
+        do Graphics.eraseBlock(y + x);
+        do Graphics.eraseBlock(y + x + 1);
+        do Graphics.eraseBlock(y + x + 2);
+        do Graphics.eraseBlock(y + x + 3);
+
+        return;
+    }
+    
+    method void drawVertical(int row, int col) {
+        var int x, y;
+		let y = (row * 512);
+		let x = col + screenOffset;
+
+		// 16bit word * 32 column = 512 bytes for one row.
+		do Graphics.drawBlock(y + x);
+		do Graphics.drawBlock(y + 512 + x);
+		do Graphics.drawBlock(y + 1024 + x);
+		do Graphics.drawBlock(y + 1536 + x);
+		return;
+    }
+
+    method void drawHorizontal(int row, int col) {
+        var int x, y;
+		let y = (row * 512);
+		let x = col + screenOffset;
+
+        do Graphics.drawBlock(y + x);
+        do Graphics.drawBlock(y + x + 1);
+        do Graphics.drawBlock(y + x + 2);
+        do Graphics.drawBlock(y + x + 3);
+
+        return;
+    }
+
+    method boolean isFixed() {
+        return (state = 4);
+    }
+
+    method void drop() {
+        var int bottom;
+
+        if (state = 0) {
+            let bottom = 15;
+        }
+        if (state = 1) {
+            let bottom = 12;
+        }
+
+        // for horzontial
+        if (row < bottom) {    
+            do erase(row, col);
+            let row = row + 1;
+            do draw(row, col);
+        } else {
+            let state = 4; //fixed when reach bottom.
+        }
+        return;
+    }
+}
