@@ -1,10 +1,12 @@
-class Line {
+class StraightTetromino {
     field int state;
     field int row;
     field int col;
     field int screenOffset;
+    field Playground playground;
 
-    constructor Line new() {
+    constructor StraightTetromino new(Playground grid) {
+        let playground = grid;
         let row = 0; // row: [0-15]
         let col = 0; // col: [0-9]
         let screenOffset = 10;
@@ -68,24 +70,55 @@ class Line {
     }
 
     method void rotateLeft() {
+        do erase(row, col);
         if (state = 0) {
-            do erase(row, col);
+            // from horizontial to vertical.
+            if (row < 2) { let row = 2; }
+            //TODO: not needed below?
+            if (row > 12) { let row = 12;} 
+            let col = col + 2;
             let state = 1;
-            do draw(row, col);
+            do draw(row, col); 
             return;
         }
         if (state = 1) {
-            do erase(row, col);
+            // from vertical to horizontial.
+            if (col < 2) { let col = 2; }
+            if (col > 7) { let col = 7; }
+            if (row > 14) { let row = 14; }
+            let col = col - 2;
+           
             let state = 0;
-            do draw(row, col);
+            do draw(row, col); 
             return;
         }
-        return; 
+        
+        return;
     }
 
     method void rotateRight() {
-        // Same for Line.
-        do rotateLeft();
+        do erase(row, col);
+        if (state = 0) {
+            if (row < 1) { let row = 1; }
+            if (row > 12) { let row = 12;} 
+            if (col > 7) { let col = 7; }
+            let col = col + 2;
+            let state = 1;
+            do draw(row, col); 
+            return;
+        }
+        if (state = 1) {
+            // from vertical to horizontial.
+            if (col < 2) { let col = 2; }
+            if (col > 7) { let col = 7; }
+            if (row > 13) { let row = 13; }
+            let col = col - 2;
+           
+            let state = 0;
+            do draw(row, col); 
+            return;
+        }
+        
         return;
     }
 
@@ -122,7 +155,7 @@ class Line {
 
 		// 16bit word * 32 column = 512 bytes for one row.
 		do Graphics.drawBlock(y + x);
-		do Graphics.drawBlock(y + 512 + x);
+		do Graphics.drawBlock(y + 512 + x);  // (512) -> draw the next row
 		do Graphics.drawBlock(y + 1024 + x);
 		do Graphics.drawBlock(y + 1536 + x);
 		return;
@@ -147,7 +180,7 @@ class Line {
 
     method void drop() {
         var int bottom;
-
+        
         if (state = 0) {
             let bottom = 15;
         }
@@ -155,14 +188,73 @@ class Line {
             let bottom = 12;
         }
 
-        // for horzontial
+        // for horzontial drop
         if (row < bottom) {    
             do erase(row, col);
             let row = row + 1;
             do draw(row, col);
-        } else {
-            let state = 4; //fixed when reach bottom.
         }
         return;
+    }
+
+    method void fixLocation() {
+        if (state = 0) {
+            // set its block into playground.
+            do playground.set(row, col);
+            do playground.set(row, col+1);
+            do playground.set(row, col+2);
+            do playground.set(row, col+3);
+        }
+        if (state = 1) {
+            // set its vertical block into playground.
+            do playground.set(row, col);
+            do playground.set(row+1, col);
+            do playground.set(row+2, col);
+            do playground.set(row+3, col);
+        }
+        let state = 4; // set fixed state
+        return;
+    }
+
+    method boolean detectCollision() {
+        var int nextRow,
+                bottom;
+
+        // debug
+        do Output.moveCursor(0, 0);
+        do Output.printString("Row:");
+        do Output.printInt(row);
+        do Output.printString("  ");
+        do Output.println();
+        do Output.printString("Col:");
+        do Output.printInt(col);
+        do Output.printString("  ");
+
+        if (state = 0) {
+            // horizontial detect
+            let bottom = 15;
+            if (row < bottom) {
+                let nextRow = row + 1;
+                return ((playground.isSet(nextRow, col)) |
+                    (playground.isSet(nextRow, col+1)) |
+                    (playground.isSet(nextRow, col+2)) |
+                    (playground.isSet(nextRow, col+3)));
+            } else {
+                // reach bottom!
+                return true;
+            }
+        }
+        if (state = 1) {
+            // vertical detect.
+            let bottom = 12;
+            if (row < bottom) {
+                let nextRow = row + 4;
+                return (playground.isSet(nextRow, col));
+            } else {
+                // reach bottom!
+                return true;
+            }
+        }
+        return false;
     }
 }

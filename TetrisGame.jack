@@ -1,19 +1,23 @@
 class TetrisGame {
     //field Square square;
     //field Square object;
-    field Line object;
+    field StraightTetromino object;
     field int direction;   // 0=none, 1=left, 2=right, 3=rotateL, 4=rotateR, 5=dropFast
     field int dropTimer;
     field int dropTick;
+    // Playground
+    field Playground playground;
     
 
     constructor TetrisGame new() {
         //let object = Square.new();
-        let object = Line.new();
+        let playground = Playground.new();
+        let object = StraightTetromino.new(playground);
         let direction = 0;
         let dropTimer = 0;
-        let dropTick = 15000;
+        let dropTick = 10000;
         do Graphics.drawBackgroundEdges();
+
         return this;
     }
 
@@ -25,9 +29,10 @@ class TetrisGame {
 
     method void moveObject() {
         var char key;
+        var boolean hit;
 
         if (object.isFixed()) {
-            let object = Line.new();
+            let object = StraightTetromino.new(playground);
             return;
         }
         let dropTimer = dropTimer + 1;
@@ -51,8 +56,19 @@ class TetrisGame {
             let direction = 0;
             do Sys.wait(5);
         }
+        
         if (dropTimer > dropTick) {
-            do object.drop();
+            let hit = object.detectCollision();
+            if (hit) {
+                do Output.moveCursor(5,0);
+                do Output.printString("Hit!");
+                do Sys.wait(500);
+                do Output.moveCursor(5,0);
+                do Output.printString("----");
+                do object.fixLocation();
+            } else {
+                do object.drop();
+            }
             let dropTimer = 0;
         }
         return;

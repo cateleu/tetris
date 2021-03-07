@@ -1,0 +1,49 @@
+class Playground {
+    field Array row;
+    field int MAXROW;
+    field int MAXCOL;
+
+    constructor Playground new() {
+        var int i, j;
+        var Array col;
+
+        let MAXROW = 16;
+        let MAXCOL = 10;
+        let row = Array.new(MAXROW);
+        let col = Array.new(MAXCOL);
+        
+        let i = 0;
+        
+        while (i < MAXROW) {
+            let j = 0;
+            while (j < MAXCOL) {
+                let col[j] = false;
+                let j = j + 1;
+            }
+            let row[i] = col;
+            let col = Array.new(MAXCOL);
+            let i = i + 1;
+        }
+        
+        return this;
+    }
+
+    method void displose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void set(int y, int x) {
+        var Array col;
+        let col = Array.new(MAXCOL);
+        let col = row[y];
+        let col[x] = true;
+        return;
+    }
+
+    method boolean isSet(int y, int x) {
+        var Array col;
+        let col = row[y];
+        return col[x];
+    }
+}
