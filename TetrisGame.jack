@@ -1,21 +1,23 @@
 class TetrisGame {
-    //field Square square;
-    //field Square object;
-    field StraightTetromino object;
     field int direction;   // 0=none, 1=left, 2=right, 3=rotateL, 4=rotateR, 5=dropFast
     field int dropTimer;
     field int dropTick;
+    field int debugFlag;   // 0=nodebug, 1=debugon
+
     // Playground
     field Playground playground;
+    field Tetromino tetromino;
+    field TetrominoFactory factory;
     
-
     constructor TetrisGame new() {
-        //let object = Square.new();
+        let factory = TetrominoFactory.new();
+        let tetromino = Tetromino.new(factory);
+
         let playground = Playground.new();
-        let object = StraightTetromino.new(playground);
         let direction = 0;
         let dropTimer = 0;
         let dropTick = 10000;
+        let debugFlag = 0;
         do Graphics.drawBackgroundEdges();
 
         return this;
@@ -23,6 +25,10 @@ class TetrisGame {
 
     method void dispose() {
         do object.dispose();
+        do tetromino.dispose();
+        do factory.dispose();
+        do playground.dispose();
+
         do Memory.deAlloc(this);
         return;
     }
@@ -31,46 +37,59 @@ class TetrisGame {
         var char key;
         var boolean hit;
 
-        if (object.isFixed()) {
-            let object = StraightTetromino.new(playground);
+        if (debugFlag > 0) {
             return;
         }
+
         let dropTimer = dropTimer + 1;
         if (direction = 1) { 
-            do object.moveLeft(); 
+            do tetromino.moveLeft();
             let direction = 0;
             do Sys.wait(5);  // delays the next movement
         }
         if (direction = 2) { 
-            do object.moveRight();
+            do tetromino.moveRight();
             let direction = 0;
             do Sys.wait(5);  // delays the next movement
         }
         if (direction = 3) {
-            do object.rotateLeft();
+            //TODO
             let direction = 0;
             do Sys.wait(5);
         }
         if (direction = 4) {
-            do object.rotateRight();
+            //TODO
             let direction = 0;
             do Sys.wait(5);
         }
+        if (direction = 5) {
+            do playground.dropFast(tetromino);
+            let direction = 0;
+            return;
+        }
         
         if (dropTimer > dropTick) {
-            let hit = object.detectCollision();
-            if (hit) {
-                do Output.moveCursor(5,0);
-                do Output.printString("Hit!");
-                do Sys.wait(500);
-                do Output.moveCursor(5,0);
-                do Output.printString("----");
-                do object.fixLocation();
+            if (~(playground.isHitDown(tetromino))) {
+                do tetromino.drop();
             } else {
-                do object.drop();
+                do playground.setPiece(tetromino);
+                do tetromino.generate();
             }
             let dropTimer = 0;
         }
+        
+        return;
+    }
+
+    method void debugGame() {
+        do Graphics.clearDebugScreen();
+        if (debugFlag = 2) {
+            do playground.dumpPlaygroundData();
+        }
+        if (debugFlag = 3) {
+            do playground.findTopFilledIndex(tetromino, 1);
+        }
+        
         return;
     }
 
@@ -97,6 +116,24 @@ class TetrisGame {
             }
             if (key = 90) { // 'Z' rotate right
                 let direction = 4;
+            }
+            if (key = 32) { // 'Spacebar' drop fast 
+                let direction = 5;
+            }
+            if (key = 68) { // 'D' - turn on debug.
+                let debugFlag = 1;
+                //do debugGame();
+            }
+            if ((debugFlag > 0) & (key = 49)) { // '1': display playground.
+                let debugFlag = 2;
+                do debugGame();
+            }
+            if ((debugFlag > 0) & (key = 50)) { // '2': display findTopFilledIndex info.
+                let debugFlag = 3;
+                do debugGame();
+            }
+            if (key = 85) { // 'U' - turn off debug and resume.
+                let debugFlag = 0;
             }
 
 

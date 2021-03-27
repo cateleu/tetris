@@ -1,4 +1,5 @@
 class Playground {
+    field int screenOffset;
     field Array row;
     field int MAXROW;
     field int MAXCOL;
@@ -7,9 +8,11 @@ class Playground {
         var int i, j;
         var Array col;
 
+        let screenOffset = 10;
         let MAXROW = 16;
         let MAXCOL = 10;
-        let row = Array.new(MAXROW);
+        // MAXROW + 1 add all block for collide detection.
+        let row = Array.new(MAXROW+1);
         let col = Array.new(MAXCOL);
         
         let i = 0;
@@ -17,19 +20,75 @@ class Playground {
         while (i < MAXROW) {
             let j = 0;
             while (j < MAXCOL) {
-                let col[j] = false;
+                let col[j] = 0;
                 let j = j + 1;
             }
             let row[i] = col;
             let col = Array.new(MAXCOL);
             let i = i + 1;
         }
-        
+
+        // add the bottom blocks
+        let j = 0;
+        while (j < MAXCOL) {
+            let col[j] = 1;
+            let j = j + 1;
+        }
+        let row[16] = col;
+
+        //zzzz debug set line
+        /*
+        let j = 0;
+        while (j < MAXCOL) {
+            let col[j] = 1;
+            let j = j + 1;
+        }
+        let row[15] = col;
+        do drawLine(15);
+        */
+        /*
+        if (isFillLine(15)){
+            do eraseLine(15);
+        }
+        */
         return this;
     }
 
-    method void displose() {
-        do Memory.deAlloc(this);
+    method void dumpPlaygroundData() {
+        var int i, j;
+        var Array rowValue;
+
+        do Output.moveCursor(6, 0);
+        do Output.printString("pg:");
+        do Output.println();
+        while (i < MAXROW) {
+            let rowValue = row[i];
+            let j = 0;
+            do Output.printInt(i);
+            do Output.printString(":[");
+            while (j < MAXCOL) {
+                do Output.printInt(rowValue[j]);
+                let j = j + 1;
+            }
+            do Output.printString("]");
+            do Output.println();
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void setBlankLineData(int rowIndex) {
+        var int i;
+        var Array col;
+
+        let i = 0;
+        let col = Array.new(MAXCOL);
+
+        while (i < MAXCOL) {
+            let col[i] = 0;
+            let i = i + 1;
+        }
+        let row[rowIndex] = col;
         return;
     }
 
@@ -37,13 +96,425 @@ class Playground {
         var Array col;
         let col = Array.new(MAXCOL);
         let col = row[y];
-        let col[x] = true;
+        let col[x] = 1;
         return;
     }
 
     method boolean isSet(int y, int x) {
         var Array col;
+        var boolean flag;
+
+        let col = row[y];
+        let flag = (col[x] = 1);
+        return flag;
+    }
+
+    method int getValue(int y, int x) {
+        var Array col;
         let col = row[y];
         return col[x];
+    }
+
+    method int findTopFilledIndex(Tetromino tetromino, int debugFlag) {
+        var int pieceColIndex,
+                pieceBottomRowIndex,
+                pgStartRowIndex, maxPlaygroundRow,
+                pgVal1, pgVal2, pgVal3, pgVal4,
+                pVal1, pVal2, pVal3, pVal4,
+                topFilledIndex,
+                iterateIndex;
+        var Array pieceArray, 
+                  pieceRowArray;
+
+        let pieceArray = tetromino.getCurrentPiece();
+        let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
+        let pieceColIndex = tetromino.getCol();
+        
+        // compare the playground block starating from top of the piece.
+        let pgStartRowIndex = tetromino.getRow();
+        let maxPlaygroundRow = 16;
+
+        if (debugFlag > 0) {
+            do Output.moveCursor(1, 0);
+            do Output.printString("findTopFilledIndex:");
+            do Output.println();
+            do Output.printString("pieceCol:");
+            do Output.printInt(pieceColIndex);
+            do Output.println();
+            do Output.printString("pgStartRowIndex:");
+            do Output.printInt(pgStartRowIndex);
+            do Output.println();
+        }
+        while (pgStartRowIndex < maxPlaygroundRow) {
+            
+            let pgVal1 = getValue(pgStartRowIndex, pieceColIndex);
+            let pgVal2 = getValue(pgStartRowIndex, pieceColIndex + 1);
+            let pgVal3 = getValue(pgStartRowIndex, pieceColIndex + 2);
+            let pgVal4 = getValue(pgStartRowIndex, pieceColIndex + 3);
+            
+            if (debugFlag > 0) {
+                do Output.printInt(pgStartRowIndex);
+                do Output.printString(":[");
+                do Output.printInt(pgVal1);
+                do Output.printInt(pgVal2);
+                do Output.printInt(pgVal3);
+                do Output.printInt(pgVal4);
+                do Output.printString("]");
+                do Output.println();
+            }
+            // if playground has any block
+            if (((pgVal1 = 1) | (pgVal2 = 1)) |
+                ((pgVal3 = 1) | (pgVal4 = 1))) {
+                // iterate from pieceBottomRowIndex to top to compare.
+                let iterateIndex = pieceBottomRowIndex;
+                while (iterateIndex > -1) {
+                    let pieceRowArray = pieceArray[iterateIndex];
+                    let pVal1 = pieceRowArray[0];
+                    let pVal2 = pieceRowArray[1];
+                    let pVal3 = pieceRowArray[2];
+                    let pVal4 = pieceRowArray[3];
+
+                    if (debugFlag > 0) {
+                        do Output.printString("piece iterate:");
+                        do Output.println();
+                        do Output.printInt(iterateIndex);
+                        do Output.printString(":[");
+                        do Output.printInt(pVal1);
+                        do Output.printInt(pVal2);
+                        do Output.printInt(pVal3);
+                        do Output.printInt(pVal4);
+                        do Output.printString("]");
+                        do Output.println();
+                    }
+
+                    if (((pgVal1 = 1 & pVal1 = 1) | 
+                        (pgVal2 = 1 & pVal2 = 1)) | 
+                        ((pgVal3 = 1 & pVal3 = 1) |
+                        (pgVal4 = 1 & pVal4 = 1))) {
+
+                        let topFilledIndex = pgStartRowIndex + (pieceBottomRowIndex - iterateIndex);
+                        if (debugFlag > 0) {
+                            do Output.printString("TopFilledIndex:");
+                            do Output.printInt(topFilledIndex);
+                            do Output.println();
+                        }
+                        return (topFilledIndex);
+
+                    }
+                    let iterateIndex = iterateIndex - 1;
+                } // while
+            }
+            let pgStartRowIndex = pgStartRowIndex + 1;
+        }
+        if (debugFlag > 0) {
+            do Output.printString("TopFilledIndex:");
+            do Output.printInt(pgStartRowIndex);
+            do Output.println();
+        }
+        return (pgStartRowIndex);
+    }
+
+    method int findDropRowIndex(Tetromino tetromino) {
+        var int pieceBottomRowIndex,
+                pgStartRowIndex, maxPlaygroundRow;
+        var Array rowArray;
+
+        let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
+        let pgStartRowIndex = tetromino.getRow() + pieceBottomRowIndex + 1;
+        let maxPlaygroundRow = 16;
+
+        if (pgStartRowIndex > 15) {
+            let pgStartRowIndex = 15;
+        }
+
+        do Output.moveCursor(9, 0);
+        do Output.printString("hitChk StartAt:[");
+        do Output.printInt(pgStartRowIndex);
+        do Output.printString("]");
+        do Output.println();
+
+        // search from next row of piece bottom position until a playground block.
+        while (pgStartRowIndex < maxPlaygroundRow) {
+            // zzzz debug
+            //do Output.moveCursor(10, 0);
+            do Output.printString("isHit At:[");
+            do Output.printInt(pgStartRowIndex);
+            do Output.printString("]");
+            do Output.println();
+            if (isHit(pgStartRowIndex, tetromino)) {
+                //zzzz
+                do Output.moveCursor(11, 0);
+                do Output.printString("** Hit:");
+                do Output.printInt(pgStartRowIndex);
+                do Output.println();
+                return pgStartRowIndex;
+            }
+            let pgStartRowIndex = pgStartRowIndex + 1;
+        }
+        return (maxPlaygroundRow - 1);
+    }
+
+    method boolean isHit(int playgroundRowIndex, Tetromino tetromino) {
+        var int pVal1, pVal2, pVal3, pVal4,
+                pgVal1, pgVal2, pgVal3, pgVal4,
+                playgroundRowIndex,
+                pieceBottomRowIndex,
+                pieceColIndex;
+        
+        do Output.printString("Check:[");
+        do Output.printInt(playgroundRowIndex);
+        do Output.printString("]");
+        do Output.println();
+
+        let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
+        let pieceColIndex = tetromino.getCol();
+
+        //let playgroundRowIndex = tetromino.getRow() + pieceBottomRowIndex + 1;
+
+        let pVal1 = tetromino.getPieceValue(pieceBottomRowIndex, pieceColIndex);
+        let pVal2 = tetromino.getPieceValue(pieceBottomRowIndex, pieceColIndex + 1);
+        let pVal3 = tetromino.getPieceValue(pieceBottomRowIndex, pieceColIndex + 2);
+        let pVal4 = tetromino.getPieceValue(pieceBottomRowIndex, pieceColIndex + 3);
+
+        let pgVal1 = getValue(playgroundRowIndex, pieceColIndex);
+        let pgVal2 = getValue(playgroundRowIndex, pieceColIndex + 1);
+        let pgVal3 = getValue(playgroundRowIndex, pieceColIndex + 2);
+        let pgVal4 = getValue(playgroundRowIndex, pieceColIndex + 3);
+
+        if (((pgVal1 = 1 & pVal1 = 1) | 
+             (pgVal2 = 1 & pVal2 = 1)) | 
+            ((pgVal3 = 1 & pVal3 = 1) |
+             (pgVal4 = 1 & pVal4 = 1))) {
+            return true;
+
+        }
+
+        return false;
+    }
+
+    method void dropFast(Tetromino tetromino) {
+        var int dropRowIndex, pieceBottomRowIndex;
+
+        // 0 means no debug.
+        let dropRowIndex = findTopFilledIndex(tetromino, 0);
+        let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
+       
+        // from playground row move up to piece bottom to "touch"
+        do tetromino.dropTo(dropRowIndex-pieceBottomRowIndex-1);
+        do setPiece(tetromino);
+        do tetromino.generate();
+        return;
+    }
+
+    //
+    // rowIndex : pos of the piece.
+    //
+    method void doFillLine(Tetromino tetromino) {
+        var int pieceRow, rowIndex, maxCol, colIndex;
+        var boolean fillLine, isBlockFilled;
+        var boolean val1, val2, val3, val4;
+        var Array rowValue;
+        
+        let maxCol = 10;
+        let colIndex = 0;
+        let fillLine = true;
+        let pieceRow = tetromino.getRow();
+        let rowIndex = pieceRow + 3; // bottom of the piece.
+        if (rowIndex > 15) {
+            let rowIndex = 15;
+        }
+
+        do Output.moveCursor(15, 0);
+        do Output.printString("isFill At:");
+        do Output.printInt(rowIndex);
+        do Output.println();
+
+        let fillLine = true;
+        do Output.printString("             ");
+        do Output.println();
+        do Output.moveCursor(17, 0);
+        do Output.printString("[");
+        while ((colIndex < maxCol) & (fillLine)) {
+                let isBlockFilled = isSet(rowIndex, colIndex);
+                if (isBlockFilled) {
+                    do Output.printString("1");
+                } else {
+                    do Output.printString("0");
+                }
+                //do Output.printString(" ");
+                if (~isBlockFilled) {
+                    let fillLine = false;
+                }
+                let colIndex = colIndex + 1;
+        }
+            do Output.printString("]");
+            do Output.println();
+            if (fillLine) {
+                do eraseLine(rowIndex);
+                do setBlankLineData(rowIndex);
+            }
+        
+        // iterate each line of piece to fill line if applicable.
+        /*
+        while (rowIndex > -1) {
+            let fillLine = true;
+            do Output.printString("[");
+            while ((colIndex < maxCol) & (fillLine)) {
+                let isBlockFilled = isSet(rowIndex, colIndex);
+                if (isBlockFilled) {
+                    do Output.printString("1");
+                } else {
+                    do Output.printString("0");
+                }
+                do Output.printString(" ");
+                if (~isBlockFilled) {
+                    let fillLine = false;
+                }
+                let colIndex = colIndex + 1;
+            }
+            do Output.printString("]");
+            do Output.println();
+            if (fillLine) {
+                do eraseLine(rowIndex);
+                do setBlankLineData(rowIndex);
+            }
+            let rowIndex = rowIndex - 1;
+        } */
+
+        return;
+    }
+
+    method void drawLine(int row) {
+        var int i, y;
+
+        let y = (row * 512);
+        
+        let i = 0;
+        while (i < 10) {
+            do Graphics.drawBlock(y + screenOffset + i);
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void eraseLine(int row) {
+        var int i, y;
+
+        let y = (row * 512);
+        
+        let i = 0;
+        while (i < 10) {
+            do Graphics.eraseBlock(y + screenOffset + i);
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void setPiece(Tetromino tetromino) {
+        var Array piece, rowValue, 
+                  pieceIndex, colIndex, pieceRow, pieceCol;
+        var int checkRowIndex;
+
+        let piece = tetromino.getCurrentPiece();
+        let pieceRow = tetromino.getRow();
+        let pieceCol = tetromino.getCol();
+        let pieceIndex = 0;
+        while (pieceIndex < 4) {
+            let rowValue = piece[pieceIndex];
+            let colIndex = 0;
+            while (colIndex < 4) {
+                if (rowValue[colIndex] > 0) {
+                    do set((pieceRow + pieceIndex), (pieceCol + colIndex));
+                }
+                let colIndex = colIndex + 1;
+            }
+            let pieceIndex = pieceIndex + 1;
+        }
+
+        let checkRowIndex = pieceRow + 3;
+        if (checkRowIndex > 15) {
+            let checkRowIndex = 15;
+        }
+
+        do doFillLine(tetromino);
+        return;
+    }
+
+    method boolean isHitDown(Tetromino tetromino) {
+        var int playgroundRow, playgroundCol,
+                pieceBottomRowIndex,
+                pieceRow, pieceCol,
+                pgVal1, pgVal2, pgVal3, pgVal4,
+                val1, val2, val3, val4;
+
+        // boundbox snapshot from playground.
+        var Array piece;
+        
+        let piece = tetromino.getCurrentPiece();
+        let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
+
+        // Start compare from the bottom
+        let playgroundRow = tetromino.getRow() + pieceBottomRowIndex + 1;
+        let playgroundCol = tetromino.getCol();
+        let pieceRow = 3;
+
+        let pgVal1 = getValue(playgroundRow, playgroundCol);
+        let pgVal2 = getValue(playgroundRow, playgroundCol + 1);
+        let pgVal3 = getValue(playgroundRow, playgroundCol + 2);
+        let pgVal4 = getValue(playgroundRow, playgroundCol + 3);
+        
+        //zzzz debug
+        /*
+        do Output.moveCursor(5, 0);
+        do Output.printString("piece bottom:");
+        do Output.printInt(pieceBottomRowIndex);
+        do Output.println();
+        do Output.printString("piece row:");
+        do Output.printInt(tetromino.getRow());
+        do Output.println();
+        do Output.printString("pg row:");
+        do Output.printInt(playgroundRow);
+        do Output.println();
+        do Output.printString("pg value:[");
+        do Output.printInt(pgVal1);
+        do Output.printString(" ");
+        do Output.printInt(pgVal2);
+        do Output.printString(" ");
+        do Output.printInt(pgVal3);
+        do Output.printString(" ");
+        do Output.printInt(pgVal4);
+        do Output.printString("]");
+        do Output.println();
+        */
+        let val1 = tetromino.getPieceValue(pieceBottomRowIndex, pieceCol);
+        let val2 = tetromino.getPieceValue(pieceBottomRowIndex, pieceCol + 1);
+        let val3 = tetromino.getPieceValue(pieceBottomRowIndex, pieceCol + 2);
+        let val4 = tetromino.getPieceValue(pieceBottomRowIndex, pieceCol + 3);
+
+        // debug
+        /*
+        do Output.printString("BottomVal:[");
+        do Output.printInt(val1);
+        do Output.printString(" ");
+        do Output.printInt(val2);
+        do Output.printString(" ");
+        do Output.printInt(val3);
+        do Output.printString(" ");
+        do Output.printInt(val4);
+        do Output.printString("]");
+        */
+
+        if (((pgVal1 = 1 & val1 = 1) | 
+            (pgVal2 = 1 & val2 = 1)) | 
+            ((pgVal3 = 1 & val3 = 1) |
+            (pgVal4 = 1 & val4 = 1))) {
+            return true;
+        } 
+        return false;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
     }
 }

@@ -1,0 +1,126 @@
+class TetrominoFactory {
+    // 0:I-Block
+    // 1:O-Block
+    // 2:Z-Block
+    field Array pieces;
+    field Array iBlock;
+    field Array oBlock;
+    field Array zBlock;
+
+    constructor TetrominoFactory new() {
+        var Array pieceCol;
+        
+        let pieces = Array.new(7);
+        let iBlock = Array.new(4);
+        let oBlock = Array.new(4);
+        let zBlock = Array.new(4);
+        let pieceCol = Array.new(4);
+
+        // I-Block
+        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
+        let iBlock[0] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 1; let pieceCol[1] = 1; let pieceCol[2] = 1; let pieceCol[3] = 1;
+        let iBlock[1] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
+        let iBlock[2] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
+        let iBlock[3] = pieceCol;
+
+        // O-Block
+        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
+        let oBlock[0] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 0; let pieceCol[1] = 1; let pieceCol[2] = 1; let pieceCol[3] = 0;
+        let oBlock[1] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 0; let pieceCol[1] = 1; let pieceCol[2] = 1; let pieceCol[3] = 0;
+        let oBlock[2] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
+        let oBlock[3] = pieceCol;
+
+        // Z-Block
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
+        let zBlock[0] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 1; let pieceCol[1] = 1; let pieceCol[2] = 0; let pieceCol[3] = 0;
+        let zBlock[1] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 0; let pieceCol[1] = 1; let pieceCol[2] = 1; let pieceCol[3] = 0;
+        let zBlock[2] = pieceCol;
+
+        let pieceCol = Array.new(4);
+        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
+        let zBlock[3] = pieceCol;
+
+        let pieces[0] = iBlock;
+        let pieces[1] = oBlock;
+        let pieces[2] = zBlock;
+
+        return this;
+    }
+
+    method Array getTetromino(int index) {
+        return pieces[index];
+    }
+
+    method void debugDumpPiece(Array piece) {
+        var int col, row;
+        var Array piece, value;
+
+        while (row < 4) {
+                let col = 0;
+                let value = piece[row];
+                do Output.printString("[");
+                while (col < 4) {
+                    do Output.printInt(value[col]);
+                    if (~(col = 3)) {
+                        do Output.printString(" ");
+                    }
+                    let col = col + 1;
+                }
+                do Output.printString("]");
+                do Output.println();
+                let row = row + 1;
+                let value = piece[row];
+        }
+        return;
+    }
+
+    method void debugDumpAllPieces() {
+        var int index, pos;
+        var Array piece;
+
+        let index = 0;
+        let pos = 6;
+        let piece = pieces[index];
+        do Output.moveCursor(pos, 0);
+        do Output.printString("Pieces:");
+        do Output.println();
+        while (index < 3) {
+            do debugDumpPiece(piece);
+            let pos = pos + 3;
+            let index = index + 1;
+            let piece = pieces[index];
+            do Output.println();
+        }
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

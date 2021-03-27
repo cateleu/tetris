@@ -55,4 +55,10 @@ class Graphics {
 		do Memory.poke(memAddress + 480, 0);
 		return;
 	}
+
+	function void clearDebugScreen() {
+		do Screen.setColor(false);
+		do Screen.drawRectangle(0, 0, 156, 255);
+		return;
+	}
 }
