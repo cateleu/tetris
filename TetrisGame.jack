@@ -3,6 +3,8 @@ class TetrisGame {
     field int dropTimer;
     field int dropTick;
     field int debugFlag;   // 0=nodebug, 1=debugon
+    field int testFlag;    // 0=default, 1=autotest
+    field boolean exit;
 
     // Playground
     field Playground playground;
@@ -14,11 +16,13 @@ class TetrisGame {
         let tetromino = Tetromino.new(factory);
 
         let playground = Playground.new();
+        do playground.usePiece(tetromino);
+
         let direction = 0;
         let dropTimer = 0;
         let dropTick = 10000;
         let debugFlag = 0;
-        do Graphics.drawBackgroundEdges();
+        let testFlag = 0;
 
         return this;
     }
@@ -37,10 +41,13 @@ class TetrisGame {
         var char key;
         var boolean hit;
 
-        if (debugFlag > 0) {
+        if (exit) {
             return;
         }
 
+        if (debugFlag > 0) {
+            return;
+        }
         let dropTimer = dropTimer + 1;
         if (direction = 1) { 
             do tetromino.moveLeft();
@@ -48,7 +55,9 @@ class TetrisGame {
             do Sys.wait(5);  // delays the next movement
         }
         if (direction = 2) { 
-            do tetromino.moveRight();
+            if (~(playground.isHitRight())) {
+                do tetromino.moveRight();
+            }
             let direction = 0;
             do Sys.wait(5);  // delays the next movement
         }
@@ -63,43 +72,68 @@ class TetrisGame {
             do Sys.wait(5);
         }
         if (direction = 5) {
-            do playground.dropFast(tetromino);
+            do playground.dropFast();
             let direction = 0;
             return;
         }
         
         if (dropTimer > dropTick) {
-            if (~(playground.isHitDown(tetromino))) {
+            if (playground.isGameOver()) {
+                let dropTimer = 0;
+                let exit = true;
+                return;
+            }
+            if (~(playground.isHitDown())) {
                 do tetromino.drop();
             } else {
-                do playground.setPiece(tetromino);
+                do playground.embedPiece();
                 do tetromino.generate();
             }
             let dropTimer = 0;
         }
-        
+
         return;
     }
 
     method void debugGame() {
+        var int result;
+
         do Graphics.clearDebugScreen();
         if (debugFlag = 2) {
             do playground.dumpPlaygroundData();
         }
         if (debugFlag = 3) {
-            do playground.findTopFilledIndex(tetromino, 1);
+            do playground.findTopFilledIndex();
         }
-        
+        if (debugFlag = 4) {
+            do playground.doFillLine();
+        }
+        if (debugFlag = 5) {
+            do playground.collapse(15);
+        }
+        if (debugFlag = 6) {
+            do playground.isGameOver();
+        }
+        if (debugFlag = 7) {
+            let result = tetromino.getPieceRightEdgeColIndex();
+            do Output.printString("getPieceRightEdgeColIndex");
+            do Output.println();
+            do Utilities.debugDisplayIntValue("right Edge", result);
+        }
+        if (debugFlag = 8) {
+            do Graphics.clearDebugScreen();
+            do playground.isHitRight();
+        }
         return;
     }
 
     method void run() {
         var char key;
-        var boolean exit;
+        var TestTetromino testTetromino;
         let exit = false;
 
         while (~exit) {
-            while (key = 0) {
+            while ((key = 0) & (~exit)) {
                 let key = Keyboard.keyPressed();
                 do moveObject();
             }
@@ -122,26 +156,62 @@ class TetrisGame {
             }
             if (key = 68) { // 'D' - turn on debug.
                 let debugFlag = 1;
-                //do debugGame();
+                do playground.setDebugFlag(debugFlag);
+                do tetromino.setDebugFlag(debugFlag);
             }
-            if ((debugFlag > 0) & (key = 49)) { // '1': display playground.
-                let debugFlag = 2;
+            if (key = 84) { // 'T' - Turn on autotest.
+                let testFlag = 1;
+                
+            }
+            if (testFlag > 0) {
+                if (key = 49) { // '1': testGetPieceRightEdgeColIndex
+                    let debugFlag = 1;
+                    do Utilities.clearScreen();
+                    let testTetromino = TestTetromino.new();
+                    do testTetromino.testGetPieceRightEdgeColIndex();
+                }
+            }
+            if ((debugFlag > 0) & (testFlag = 0)) {
+                if (key = 49) { // '1': display playground.
+                    let debugFlag = 2;
+                }
+                if (key = 50) { // '2': display findTopFilledIndex info.
+                    let debugFlag = 3;
+                }
+                if (key = 51) { // '3': display doFillLine info.
+                    let debugFlag = 4;
+                }
+                if (key = 52) { // '4': display collapse info.
+                    let debugFlag = 5;
+                }
+                if (key = 53) { // '5': display isGameOver info.
+                    let debugFlag = 6;
+                }
+                if (key = 54) { // '6': display right edge col.
+                    let debugFlag = 7;
+                }
+                if (key = 55) { // '7': display isHitRight.
+                    let debugFlag = 8;
+                }
+                do playground.setDebugFlag(debugFlag);
                 do debugGame();
             }
-            if ((debugFlag > 0) & (key = 50)) { // '2': display findTopFilledIndex info.
-                let debugFlag = 3;
-                do debugGame();
-            }
+           
             if (key = 85) { // 'U' - turn off debug and resume.
                 let debugFlag = 0;
+                let testFlag = 0;
+                do playground.setDebugFlag(debugFlag);
             }
 
-
-            while (~(key = 0)) {
+            while ((~(key = 0)) & (~exit)) {
                 let key = Keyboard.keyPressed();
                 do moveObject();
             }
         } // while
+
+        if (exit) {
+            do Utilities.showGameOver();
+        }
         return;
     }
 }

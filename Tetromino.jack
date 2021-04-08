@@ -1,7 +1,10 @@
 class Tetromino {
     field TetrominoFactory factory;
-    field int screenOffset;
+    field int screenOffset; // offset to screen playground.
+    field int maxSize; // 4 by 4 square.
     field int row, col;
+    field int debugFlag;
+
     field Array piece;
 
     //zzzz debug
@@ -11,25 +14,18 @@ class Tetromino {
         let factory = tetrominoFactory;
 
         let screenOffset = 10;
-        let row = 0;    // row: [0-15]
-        let col = 0;    // col: [0-9]
+        let row = 0;        // row: [0-15]
+        let col = 0;        // col: [0-9]
+        let maxSize = 4;    // 4 by 4: [0-3] 
 
         do generate();
         //do factory.debugDumpAllPieces();
-        // debug
-        /*
-        do Output.printString("pieceValue:");
-        do Output.println();
-        do Output.printInt(getPieceValue(1,0));
-        do Output.printInt(getPieceValue(1,1));
-        do Output.printInt(getPieceValue(1,2));
-        do Output.println();
-        do Output.printInt(getPieceValue(2,0));
-        do Output.printInt(getPieceValue(2,1));
-        do Output.printInt(getPieceValue(2,2));
-        do Output.println();
-        */
         return this;
+    }
+
+    method void setDebugFlag(int flag) {
+        let debugFlag = flag;
+        return;
     }
 
     // must run generate first!
@@ -66,12 +62,82 @@ class Tetromino {
         return value[pieceCol];
     }
 
+    method int getPieceRightEdgeColIndex() {
+        var int pieceColIndex,
+                pieceRowIndex;
+        var Array rowValue;
+
+        let pieceColIndex = maxSize - 1;
+        while (pieceColIndex > -1) {
+            let pieceRowIndex = 0;
+            //let rowValue = piece[pieceRowIndex];
+            //if (debugFlag = 7) {
+                
+            //}
+            while (pieceRowIndex < maxSize) {
+                let rowValue = piece[pieceRowIndex];
+                //do Utilities.displayArrayValues(rowValue, maxSize);
+                if (rowValue[pieceColIndex] = 1) {
+                    return pieceColIndex;
+                }
+                let pieceRowIndex = pieceRowIndex + 1;
+            }
+            let pieceColIndex = pieceColIndex - 1;
+        }
+        return pieceColIndex;
+    }
+
+    method int getPieceRightEdgeIndex() {
+        var int pieceRightEdgeIndex,
+                val1, val2, val3, val4;
+        var Array rowValue;
+
+        // search from far right index.
+        let pieceRightEdgeIndex = maxSize - 1;
+        while (pieceRightEdgeIndex > -1) {
+            let rowValue = piece[pieceRightEdgeIndex];
+            let val1 = rowValue[0];
+            let val2 = rowValue[1];
+            let val3 = rowValue[2];
+            let val4 = rowValue[3];
+
+            if (((val1 = 1) | (val2 = 1)) | 
+                ((val3 = 1) | (val4 = 1))) {
+                    return pieceRightEdgeIndex;
+            }
+            let pieceRightEdgeIndex = pieceRightEdgeIndex - 1;
+        } // while
+        return -1; // error the piece has no block!
+    }
+
+    method int getPieceTopRowIndex() {
+        var int pieceTopIndex,
+                val1, val2, val3, val4;
+        var Array rowValue;
+
+        let pieceTopIndex = 0;
+        while (pieceTopIndex < maxSize) {
+            let rowValue = piece[pieceTopIndex];
+            let val1 = rowValue[0];
+            let val2 = rowValue[1];
+            let val3 = rowValue[2];
+            let val4 = rowValue[3];
+
+            if (((val1 = 1) | (val2 = 1)) | 
+                ((val3 = 1) | (val4 = 1))) {
+                    return pieceTopIndex;
+            }
+            let pieceTopIndex = pieceTopIndex + 1;
+        }
+        return -1; //error - the piece has no block!
+    }
+
     method int getPieceBottomRowIndex() {
         var int pieceBottom,
             val1, val2, val3, val4;
         var Array rowValue;
 
-        let pieceBottom = 3; 
+        let pieceBottom = maxSize - 1; 
         while (pieceBottom > -1) {
             let rowValue = piece[pieceBottom];
             let val1 = rowValue[0];
@@ -94,6 +160,11 @@ class Tetromino {
         let rowValue = Array.new(4);
         let rowValue = piece[rowIndex];
         return rowValue[colIndex];
+    }
+
+    method void setPiece(int pieceNo) {
+        let piece = factory.getTetromino(pieceNo);
+        return;
     }
 
     method void generate() {

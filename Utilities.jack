@@ -1,0 +1,57 @@
+class Utilities {
+    constructor Utilities new() {
+        return this;
+    }
+
+    function void clearScreen() {
+        do Screen.clearScreen();
+        return;
+    }
+
+    function void showGameOver() {
+        do Output.moveCursor(10, 25);
+        do Output.printString("GAME OVER!");
+        return;
+    }
+
+    function void displayArray10Values(Array rowArray) {
+        var int maxCol, colIndex;
+
+        let maxCol = 10;
+        let colIndex = 0;
+
+        do Output.printString("[");
+        while (colIndex < maxCol) {
+            do Output.printInt(rowArray[colIndex]);
+            let colIndex = colIndex + 1;
+        }
+        do Output.printString("]");
+        do Output.println();
+        return;
+    }
+
+    function void displayArrayValues(Array rowArray, int size) {
+        var int maxCol, colIndex;
+
+        let maxCol = size;
+        let colIndex = 0;
+
+        do Output.printString("[");
+        while (colIndex < maxCol) {
+            do Output.printInt(rowArray[colIndex]);
+            let colIndex = colIndex + 1;
+        }
+        do Output.printString("]");
+        do Output.println();
+        return;
+    }
+
+    function void debugDisplayIntValue(String label, int value) {
+        do Output.printString(label);
+        do Output.printString(":[");
+        do Output.printInt(value);
+        do Output.printString("]");
+        do Output.println();
+        return;
+    }
+}

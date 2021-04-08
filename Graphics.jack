@@ -59,6 +59,9 @@ class Graphics {
 	function void clearDebugScreen() {
 		do Screen.setColor(false);
 		do Screen.drawRectangle(0, 0, 156, 255);
+		do Output.moveCursor(0, 0);
 		return;
 	}
+
+	
 }

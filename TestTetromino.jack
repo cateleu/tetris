@@ -1,0 +1,33 @@
+class TestTetromino {
+    field Tetromino tetromino;
+    field TetrominoFactory factory;
+
+    constructor TestTetromino new() {
+        let factory = TetrominoFactory.new();
+        let tetromino = Tetromino.new(factory);
+        return this;
+    }
+
+    method void testGetPieceRightEdgeColIndex() {
+        var int rightEdgeIndex;
+
+        do Output.printString("testGetPieceRightEdgeColIndex:");
+        do Output.println();
+        do tetromino.setPiece(0);
+
+        do factory.debugDumpPiece(tetromino.getCurrentPiece());
+        let rightEdgeIndex = tetromino.getPieceRightEdgeColIndex();
+        do Utilities.debugDisplayIntValue("I-Block getPieceRightEdgeColIndex", rightEdgeIndex);
+        if (rightEdgeIndex = 3) {
+            do Output.printString("Pass RightEdgeIndex I-Block");
+        } else {
+            do Output.printString("Fail RightEdgeIndex I-Block");
+        }
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}
