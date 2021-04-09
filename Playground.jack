@@ -484,10 +484,11 @@ class Playground {
         if (debugFlag = 6) {
             do Graphics.clearDebugScreen();
             do Output.printString("isGameOver");
+            do Output.println();
             do Utilities.debugDisplayIntValue("piece bottom", pieceActualBottomPos);
             do Utilities.debugDisplayIntValue("playground top", playgroundTopIndex);
         }
-        if ((pieceActualBottomPos > playgroundTopIndex) & (pieceActualBottomPos < 1)){
+        if ((pieceActualBottomPos > playgroundTopIndex) & (playgroundTopIndex < 2)){
             //if (debugFlag > 0) {
                 do Utilities.debugDisplayIntValue("p bottom pos", pieceActualBottomPos);
                 do Utilities.debugDisplayIntValue("pg top pos", playgroundTopIndex); 
