@@ -28,6 +28,10 @@ class Tetromino {
         return;
     }
 
+    method int getMaxSize() {
+        return maxSize;
+    }
+
     // must run generate first!
     method void debugDumpPiece() {
         var int i, j, column, value;

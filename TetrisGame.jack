@@ -49,12 +49,14 @@ class TetrisGame {
         }
         let dropTimer = dropTimer + 1;
         if (direction = 1) { 
-            do tetromino.moveLeft();
+            if (~(playground.isHit(0, -1))) {
+                do tetromino.moveLeft();
+            }
             let direction = 0;
             do Sys.wait(5);  // delays the next movement
         }
         if (direction = 2) { 
-            if (~(playground.isHitRight())) {
+            if (~(playground.isHit(0, 1))) {
                 do tetromino.moveRight();
             }
             let direction = 0;
@@ -82,7 +84,7 @@ class TetrisGame {
                 let exit = true;
                 return;
             }
-            if (~(playground.isHitDown())) {
+            if (~(playground.isHit(1, 0))) {
                 do tetromino.drop();
             } else {
                 do playground.embedPiece();
@@ -118,10 +120,6 @@ class TetrisGame {
             do Output.printString("getPieceRightEdgeColIndex");
             do Output.println();
             do Utilities.debugDisplayIntValue("right Edge", result);
-        }
-        if (debugFlag = 8) {
-            do Graphics.clearDebugScreen();
-            do playground.isHitRight();
         }
         return;
     }
@@ -189,7 +187,7 @@ class TetrisGame {
                 if (key = 54) { // '6': display right edge col.
                     let debugFlag = 7;
                 }
-                if (key = 55) { // '7': display isHitRight.
+                if (key = 55) { // '7': 
                     let debugFlag = 8;
                 }
                 do playground.setDebugFlag(debugFlag);

@@ -494,101 +494,41 @@ class Playground {
         return false;
     }
 
-    method boolean isHitRight() {
-        var Array piece;
-        var int pieceIndex,
+    method boolean isHit(int dRow, int dCol) {
+        var Array piece, pieceRowArray;
+        var int pieceRowIndex, pieceColIndex,
                 pieceTopRowIndex, pieceBottomRowIndex,
-                pieceRightEdgeColIndex,
-                pgRowPos,
-                pgColPos,
-                topPlaygroundRow, bottomPlaygroundRow,
-                pgVal, pVal;
+                pieceRowPos, pieceColPos,
+                pgValue;
 
         let piece = tetromino.getCurrentPiece();
-        let pieceRightEdgeColIndex = tetromino.getPieceRightEdgeColIndex();
         let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
         let pieceTopRowIndex = tetromino.getPieceTopRowIndex();
 
-        // detect right edge.
-        if ((tetromino.getCol() + pieceRightEdgeColIndex + 1) = MAXCOL) {
-            return true;
-        }
+        let pieceRowIndex = pieceTopRowIndex;
+        while (pieceRowIndex < (pieceBottomRowIndex+1)) {
+            let pieceColIndex = 0;
+            let pieceRowArray = piece[pieceRowIndex];
+            while (pieceColIndex < tetromino.getMaxSize()) {
+                // if the piece block is not empty
+                if (pieceRowArray[pieceColIndex] > 0) {
+                    let pieceRowPos = tetromino.getRow() + pieceRowIndex + dRow;
+                    let pieceColPos = tetromino.getCol() + pieceColIndex + dCol;
 
-        // Start compare from the right edge of playground.
-        let topPlaygroundRow = tetromino.getRow() + pieceTopRowIndex;
-        let bottomPlaygroundRow = tetromino.getRow() + pieceBottomRowIndex;
+                    if ((pieceColPos > (MAXCOL-1) ) | (pieceColPos < 0)) {
+                        return true;
+                    }
 
-        if (bottomPlaygroundRow > (MAXROW - 1)) {
-            let bottomPlaygroundRow = (MAXROW - 1);
-        }
-
-        let pgRowPos = topPlaygroundRow;
-        let pieceIndex = pieceTopRowIndex;
-
-        if (debugFlag = 8) {
-            do Output.printString("isHitRight");
-            do Output.println();
-            do Utilities.debugDisplayIntValue("p row pos", tetromino.getRow());
-            do Utilities.debugDisplayIntValue("p col pos", tetromino.getCol());
-            do Utilities.debugDisplayIntValue("p right edge", pieceRightEdgeColIndex);
-            do Utilities.debugDisplayIntValue("p top rowindex", pieceTopRowIndex);
-            do Utilities.debugDisplayIntValue("p bottom index", pieceBottomRowIndex);
-            do Utilities.debugDisplayIntValue("pg top", topPlaygroundRow);
-            do Utilities.debugDisplayIntValue("pg bottom", bottomPlaygroundRow);
-        }
-        while (pieceIndex < (pieceBottomRowIndex + 1)) {
-            let pVal = tetromino.getPieceValue(pieceIndex, pieceRightEdgeColIndex);
-            let pgRowPos = tetromino.getRow() + pieceIndex;
-            let pgColPos = tetromino.getCol() + (pieceRightEdgeColIndex + 1);
-            let pgVal = getValue(pgRowPos, pgColPos);
-            if (debugFlag = 8) {
-                do Utilities.debugDisplayIntValue("pieceIndex", pieceIndex);
-                do Utilities.debugDisplayIntValue("pgRowPos", pgRowPos);
-                do Utilities.debugDisplayIntValue("pgColPos", pgColPos);
-                do Utilities.debugDisplayIntValue("pgVal", pgVal);
-                do Utilities.debugDisplayIntValue("pVal", pVal);
+                    let pgValue = getValue(pieceRowPos, pieceColPos);
+                    if (pgValue > 0) {
+                        return true;
+                    }
+                }
+                let pieceColIndex = pieceColIndex + 1;
             }
-            if (pgVal = 1 & pVal = 1) {
-                    return true;
-            }
-            let pieceIndex = pieceIndex + 1;
+            let pieceRowIndex = pieceRowIndex + 1;
         }
-        return false;
-    }
 
-    method boolean isHitDown() {
-        var int playgroundRow, playgroundCol,
-                pieceBottomRowIndex,
-                pieceCol,
-                pgVal1, pgVal2, pgVal3, pgVal4,
-                val1, val2, val3, val4;
-
-        // boundbox snapshot from playground.
-        var Array piece;
-        
-        let piece = tetromino.getCurrentPiece();
-        let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
-
-        // Start compare from the bottom
-        let playgroundRow = tetromino.getRow() + pieceBottomRowIndex + 1;
-        let playgroundCol = tetromino.getCol();
-
-        let pgVal1 = getValue(playgroundRow, playgroundCol);
-        let pgVal2 = getValue(playgroundRow, playgroundCol + 1);
-        let pgVal3 = getValue(playgroundRow, playgroundCol + 2);
-        let pgVal4 = getValue(playgroundRow, playgroundCol + 3);
-        
-        let val1 = tetromino.getPieceValue(pieceBottomRowIndex, pieceCol);
-        let val2 = tetromino.getPieceValue(pieceBottomRowIndex, pieceCol + 1);
-        let val3 = tetromino.getPieceValue(pieceBottomRowIndex, pieceCol + 2);
-        let val4 = tetromino.getPieceValue(pieceBottomRowIndex, pieceCol + 3);
-
-        if (((pgVal1 = 1 & val1 = 1) | 
-            (pgVal2 = 1 & val2 = 1)) | 
-            ((pgVal3 = 1 & val3 = 1) |
-            (pgVal4 = 1 & val4 = 1))) {
-            return true;
-        } 
         return false;
     }
 
