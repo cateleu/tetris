@@ -489,10 +489,6 @@ class Playground {
             do Utilities.debugDisplayIntValue("playground top", playgroundTopIndex);
         }
         if ((pieceActualBottomPos > playgroundTopIndex) & (playgroundTopIndex < 2)){
-            //if (debugFlag > 0) {
-                do Utilities.debugDisplayIntValue("p bottom pos", pieceActualBottomPos);
-                do Utilities.debugDisplayIntValue("pg top pos", playgroundTopIndex); 
-            //}
            return true;
         }
         return false;

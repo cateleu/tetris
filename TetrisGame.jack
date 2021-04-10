@@ -28,7 +28,6 @@ class TetrisGame {
     }
 
     method void dispose() {
-        do object.dispose();
         do tetromino.dispose();
         do factory.dispose();
         do playground.dispose();
