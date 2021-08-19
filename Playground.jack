@@ -1,6 +1,7 @@
 class Playground {
     field int screenOffset;
     field Array row;
+    field Array col;
     field int MAXROW;
     field int MAXCOL;
     field Tetromino tetromino;
@@ -8,10 +9,7 @@ class Playground {
 
     constructor Playground new() {
         var int i, j;
-        var Array col;
-
-        do drawSideEdges();
-
+        
         let screenOffset = 10;
         let MAXROW = 16;
         let MAXCOL = 10;
@@ -21,6 +19,7 @@ class Playground {
         
         let i = 0;
         
+        // Initialize the while playground value to be 0. (no block)
         while (i < MAXROW) {
             let j = 0;
             while (j < MAXCOL) {
@@ -40,39 +39,11 @@ class Playground {
         }
         let row[16] = col;
 
-        //zzzz debug set line
-        /*
-        let j = 0;
-        while (j < MAXCOL) {
-            let col[j] = 1;
-            let j = j + 1;
-        }
-        let row[15] = col;
-        do drawLine(15);
-        */
-        /*
-        if (isFillLine(15)){
-            do eraseLine(15);
-        }
-        */
         return this;
     }
 
     method void drawSideEdges() {
         do Graphics.drawBackgroundEdges();
-        return;
-    }
-
-    method void debugShowRowNumber() {
-        var int rowIndex, rowPos;
-
-        let rowIndex = 0;
-        do Output.moveCursor(rowIndex, 18);
-        while (rowIndex < MAXROW) {
-            do Output.printInt(rowIndex);
-            do Output.println();
-            let rowIndex = rowIndex + 1;
-        }
         return;
     }
 
@@ -95,15 +66,32 @@ class Playground {
         do Output.println();
         while (i < MAXROW) {
             let rowValue = row[i];
-            let j = 0;
-            do Output.printInt(i);
-            do Output.printString(":[");
-            while (j < MAXCOL) {
-                do Output.printInt(rowValue[j]);
-                let j = j + 1;
-            }
-            do Output.printString("]");
-            do Output.println();
+            if (rowValue = 0) {
+                do Output.printInt(i);
+                do Output.printString(":[");
+                do Output.printString("0--------0");
+                do Output.printString("]");
+                do Output.println();
+            } else {
+                if (rowValue = -1) {
+                do Output.printInt(i);
+                do Output.printString(":[");
+                do Output.printString("----------");
+                do Output.printString("]");
+                do Output.println();
+                } else {
+                    let j = 0;
+                    do Output.printInt(i);
+                    do Output.printString(":[");
+                    while (j < MAXCOL) {
+                        do Output.printInt(rowValue[j]);
+                        let j = j + 1;
+                    }
+                    do Output.printString("]");
+                    do Output.println();
+                }
+            } 
+            
             let i = i + 1;
         }
         return;
@@ -124,11 +112,52 @@ class Playground {
         return;
     }
 
+    method void setLineErased(int rowIndex) {
+        //zzzz
+        do fillPlayground(rowIndex, 0, 2, 10);
+        //let row[rowIndex] = -1;
+        /*
+        var Array rowArray;
+        var int i;
+        var Array col;
+       
+        let rowArray = row[rowIndex];
+        do rowArray.dispose();
+        //let row[rowIndex] = -1;
+        let i = 0;
+        let col = Array.new(MAXCOL);
+
+        while (i < MAXCOL) {
+            let col[i] = 2;
+            let i = i + 1;
+        }
+        let row[rowIndex] = col;
+        */
+        return;
+    }
+
+    method boolean isLineErased(int rowIndex) {
+        //return row[rowIndex] = -1;
+        var Array rowArray;
+        let rowArray = row[rowIndex];
+        return rowArray[0] = 2;
+    }
+
+    // Set row y, col x the value 1.
     method void set(int y, int x) {
         var Array col;
         let col = Array.new(MAXCOL);
         let col = row[y];
         let col[x] = 1;
+        return;
+    }
+
+    // Set row y, col x with value.
+    method void setValue(int y, int x, int value) {
+        var Array col;
+        let col = Array.new(MAXCOL);
+        let col = row[y];
+        let col[x] = value;
         return;
     }
 
@@ -142,10 +171,6 @@ class Playground {
             return true;
         }
         return false;
-        /*
-        let flag = (col[x] = 1);
-        return flag;
-        */
     }
 
     method int getValue(int y, int x) {
@@ -169,7 +194,7 @@ class Playground {
         let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
         let pieceColIndex = tetromino.getCol();
         
-        // compare the playground block starating from top of the piece.
+        // compare the playground block starting from top of the piece.
         let pgStartRowIndex = tetromino.getRow();
         let maxPlaygroundRow = 16;
 
@@ -253,17 +278,105 @@ class Playground {
         return (pgStartRowIndex);
     }
 
-    method void dropFast() {
-        var int dropRowIndex, pieceBottomRowIndex;
+    method void dropFastRevised() {
+        var int currentRowIndex,
+                diff;
 
-        // 0 means no debug.
-        let dropRowIndex = findTopFilledIndex();
-        let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
-       
-        // from playground row move up to piece bottom to "touch"
-        do tetromino.dropTo(dropRowIndex-pieceBottomRowIndex-1);
-        do embedPiece();
-        do tetromino.generate();
+        let currentRowIndex = 1;
+        let diff = MAXROW - 1 - tetromino.getPieceBottomRowIndex();
+
+        while (currentRowIndex < diff) {
+            // Check from tetromino's position + currentRowIndex to see if it is hit.
+            //if (~isHit(currentRowIndex, 0)) {
+            if (~isHitRevised(currentRowIndex, 0)) {
+                let currentRowIndex = currentRowIndex + 1;
+            } else {
+                // it was checked currentRowIndex is hit, so drop to currentRowIndex - 1
+                // from the tetromino position.
+                do tetromino.dropTo(tetromino.getRow() + currentRowIndex - 1);
+                do embedPiece();
+                do tetromino.generate();
+                return;
+            }
+        }
+        return;
+    }
+
+    method boolean isEmptyLine(int rowIndex) {
+        var Array rowValueArray;
+        var int colIndex,
+                checkFlag;
+
+        if (row[rowIndex] = -1) {
+            return false;
+        }
+        let rowValueArray = row[rowIndex];
+        let colIndex = 0;
+        let checkFlag = 0;
+        while (colIndex < MAXCOL) {
+            let checkFlag = (checkFlag * rowValueArray[colIndex]);
+            let colIndex = colIndex + 1;
+        }
+        return (checkFlag = 0);
+    }
+
+    // fill at rowIndex, col at startCol with fillLength long.
+    method void fillPlayground(int rowIndex, int startCol, int value, int fillLength) {
+        var int maxFill, i;
+        
+        let maxFill = startCol + fillLength;
+        let i = startCol;
+        while (i < maxFill) {
+            do setValue(rowIndex, i, value);
+            let i = i + 1;
+        }
+        return;
+    }
+
+    // if rowIndex is blank, drop the above line to rowIndex.
+    // Iterate this process until the top is dropped.
+    method void collapseAt(int rowIndex) {
+        var int processRowIndex,
+                aboveRowIndex,
+                moveToRowIndex;
+        var Array rowArray,
+                  rowAboveArray;
+
+        do Utilities.debugDisplayIntValue("collapseAt",rowIndex);
+
+        let processRowIndex = rowIndex;
+        while (processRowIndex > 0) {
+            if (isLineErased(processRowIndex)) {
+                //do Utilities.debugDisplayIntValue("empty at:",processRowIndex);
+                // move above row to this row.
+                let aboveRowIndex = processRowIndex - 1;
+                let moveToRowIndex = processRowIndex;
+                do Utilities.debugDisplayIntValue("above",aboveRowIndex);
+                do Utilities.debugDisplayIntValue("moveTo",moveToRowIndex);
+                while (aboveRowIndex > 0) {
+                    //zzzz
+                    /*
+                    if (isEmptyLine(aboveRowIndex)) {
+                        do fillPlayground(moveToRowIndex, 0, 0, 10);
+                    } else {
+                        if (~isEmptyLine(aboveRowIndex)) {
+                        let rowAboveArray = row[aboveRowIndex];
+                        let rowArray = row[moveToRowIndex];
+                        let row[moveToRowIndex] = rowAboveArray;
+                        let aboveRowIndex = aboveRowIndex - 1;
+                        let moveToRowIndex = moveToRowIndex - 1;
+                        }
+                    } */
+                    let rowAboveArray = row[aboveRowIndex];
+                        let rowArray = row[moveToRowIndex];
+                        let row[moveToRowIndex] = rowAboveArray;
+                        let aboveRowIndex = aboveRowIndex - 1;
+                        let moveToRowIndex = moveToRowIndex - 1;
+                } 
+            }
+            let processRowIndex = processRowIndex - 1;
+            
+        }
         return;
     }
 
@@ -277,7 +390,7 @@ class Playground {
         do Output.printString("** rowIndex:");
         do Output.printInt(rowIndex);
         do Output.println();
-        // temp for 12 testing.
+        
         while (rowIndex > 0) {
             let rowAboveIndex = rowIndex - 1;
             let rowAboveArray = row[rowAboveIndex];
@@ -299,69 +412,60 @@ class Playground {
             do Output.println();
             do Utilities.displayArray10Values(row[rowIndex]);
 
-            do updateLine(rowIndex);
+            //do updateLine(rowIndex);
             let rowIndex = rowIndex - 1;
         }
         return;
     }
 
-    //
-    // rowIndex : pos of the piece.
-    //
-    method void doFillLine() {
+    method void doFillLineRevised() {
         var int pieceBottomRowIndex,
                 pieceRow, rowIndex, colIndex,
-                checkFlag;
+                checkFlag,
+                collapseAtIndex,
+                eraseLine;
         
         var Array rowValue;
+
+        var int needCollapse;
         
+        let eraseLine = 0;
+        let needCollapse = 0;
         let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
         let colIndex = 0;
         let pieceRow = tetromino.getRow();
         
-        let rowIndex = pieceRow + pieceBottomRowIndex;
+        // from the bottom of the piece index.
+        let rowIndex = pieceRow + 3; // MAX - 1 = 3
+        let collapseAtIndex = rowIndex;
         if (rowIndex > (MAXROW - 1)) {
             let rowIndex = 15;
         }
 
-        do Output.moveCursor(1, 0);
+        // Check playground block if there is filled line to erase.
         while (rowIndex > (pieceRow - 1)) {
             let checkFlag = 1;
             let rowValue = row[rowIndex];
             let colIndex = 0;
-
-            if (debugFlag = 4) {
-                do Output.printString("rowIndex:[");
-                do Output.printInt(rowIndex);
-                do Output.printString("]");
-                do Output.println();
-                do Output.printString("[");
-            }
-            
+ 
             while (colIndex < MAXCOL) {
-                if (debugFlag = 4) {
-                    do Output.printInt(rowValue[colIndex]);
-                }
-                
                 let checkFlag = (checkFlag * rowValue[colIndex]);
                 let colIndex = colIndex + 1;
             }
-
-            if (debugFlag = 4) {
-                do Output.printString("]");
-                do Output.println();
-            }
-            
             if (checkFlag > 0) {
-                do Output.printString("**fill at:");
-                do Output.printInt(rowIndex);
-                do Output.println();
-
                 do eraseLine(rowIndex);
-                do setBlankLineData(rowIndex);
-                do collapse(rowIndex);
-            }
+                do setLineErased(rowIndex);
+                let eraseLine = eraseLine + 1;
+            }     
             let rowIndex = rowIndex - 1;
+        }
+
+        //do Utilities.debugDisplayIntValue("collapseAtIndex", collapseAtIndex);
+        while (collapseAtIndex > 0) {
+            do collapseAt(collapseAtIndex);
+            if (~isLineErased(collapseAtIndex)) {
+                let collapseAtIndex = -1;
+            }
         }
         return;
     }
@@ -372,6 +476,8 @@ class Playground {
 
         do eraseLine(rowIndex);
         let rowValue = row[rowIndex];
+        //zzzz
+        //do Utilities.displayArray10Values(rowValue);
         let y = (rowIndex * 512);
         let i = 0;
         while (i < 10) {
@@ -381,6 +487,28 @@ class Playground {
                 do Graphics.eraseBlock(y + screenOffset + i);
             }
             let i = i + 1;
+        }
+        return;
+    }
+
+    method void refresh() {
+        var int rowIndex, i, y;
+        var Array rowValue;
+
+        let rowIndex = 15;
+        while (rowIndex > 0) {
+            let rowValue = row[rowIndex];
+            let y = (rowIndex * 512);
+            let i = 0;
+            while (i < 10) {
+                if (rowValue[i] = 1) {
+                    do Graphics.drawBlock(y + screenOffset + i);
+                } else {
+                    do Graphics.eraseBlock(y + screenOffset + i);
+                }
+                let i = i + 1;
+            }
+            let rowIndex = rowIndex - 1;
         }
         return;
     }
@@ -423,6 +551,7 @@ class Playground {
         let pieceRow = tetromino.getRow();
         let pieceCol = tetromino.getCol();
         let pieceIndex = 0;
+        // Copy piece value onto playground.
         while (pieceIndex < 4) {
             let rowValue = piece[pieceIndex];
             let colIndex = 0;
@@ -440,7 +569,7 @@ class Playground {
             let checkRowIndex = 15;
         }
 
-        do doFillLine();
+        do doFillLineRevised();
         return;
     }
 
@@ -489,11 +618,54 @@ class Playground {
             do Utilities.debugDisplayIntValue("playground top", playgroundTopIndex);
         }
         if ((pieceActualBottomPos > playgroundTopIndex) & (playgroundTopIndex < 2)){
+            do Graphics.clearDebugScreen();
+            do Output.printString("isGameOver");
+            do Output.println();
+            do Utilities.debugDisplayIntValue("piece bottom", pieceActualBottomPos);
+            do Utilities.debugDisplayIntValue("playground top", playgroundTopIndex);
            return true;
         }
         return false;
     }
 
+    // dRow - delta.
+    // e.g. dRow = 1 what if the current tetromino is at row + 1?
+    method boolean isHitRevised(int dRow, int dCol) {
+        var int currentPieceRowPos,
+                currentPieceColPos,
+                pieceValue,
+                playgroundValue,
+                pgRow,
+                pgCol,
+                i,j;
+
+        let currentPieceRowPos = tetromino.getRow();
+        let currentPieceColPos = tetromino.getCol();
+        let i = 3;
+
+        while (i > 0) {
+            let j = 3;
+            while (j > 0) {
+                let pieceValue = tetromino.getPieceValue(i, j);
+                if (pieceValue > 0) {
+                    let pgRow = currentPieceRowPos + dRow + i;
+                    let pgCol = currentPieceColPos + dCol + j;
+
+                    if (pgRow > MAXROW - 1 | pgRow = MAXROW) {
+                        return true;
+                    } 
+                    let playgroundValue = getValue(pgRow, pgCol);
+                    if (playgroundValue > 0) {
+                        return true;
+                    }
+                }              
+                let j = j - 1;
+            }
+            let i = i - 1;
+        }
+        return false;
+    }
+    
     method boolean isHit(int dRow, int dCol) {
         var Array piece, pieceRowArray;
         var int pieceRowIndex, pieceColIndex,
@@ -502,6 +674,9 @@ class Playground {
                 pgValue;
 
         let piece = tetromino.getCurrentPiece();
+        // I just tried to save iteration by find the row/col index
+        // that has block so it won't go through blank space
+        // which may not be necessary.
         let pieceBottomRowIndex = tetromino.getPieceBottomRowIndex();
         let pieceTopRowIndex = tetromino.getPieceTopRowIndex();
 
@@ -512,6 +687,8 @@ class Playground {
             while (pieceColIndex < tetromino.getMaxSize()) {
                 // if the piece block is not empty
                 if (pieceRowArray[pieceColIndex] > 0) {
+                    // get the playground row/col position with respect to
+                    // the piece position.
                     let pieceRowPos = tetromino.getRow() + pieceRowIndex + dRow;
                     let pieceColPos = tetromino.getCol() + pieceColIndex + dCol;
 

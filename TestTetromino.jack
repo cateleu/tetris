@@ -23,6 +23,7 @@ class TestTetromino {
         } else {
             do Output.printString("Fail RightEdgeIndex I-Block");
         }
+        do Output.println();
         return;
     }
 

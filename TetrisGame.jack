@@ -1,4 +1,9 @@
 class TetrisGame {
+    field int CMD_DROPFAST;
+    field int CMD_ROTATE_R;
+    field int CMD_ROTATE_L;
+    field int CMD_RIGHT;
+    field int CMD_LEFT;
     field int direction;   // 0=none, 1=left, 2=right, 3=rotateL, 4=rotateR, 5=dropFast
     field int dropTimer;
     field int dropTick;
@@ -17,12 +22,20 @@ class TetrisGame {
 
         let playground = Playground.new();
         do playground.usePiece(tetromino);
+        do playground.drawSideEdges();
 
         let direction = 0;
         let dropTimer = 0;
         let dropTick = 10000;
         let debugFlag = 0;
         let testFlag = 0;
+
+        let CMD_LEFT = 1;
+        let CMD_RIGHT = 2;
+        let CMD_ROTATE_L = 3;
+        let CMD_ROTATE_R = 4;
+        let CMD_DROPFAST = 5;
+        
 
         return this;
     }
@@ -48,32 +61,34 @@ class TetrisGame {
             return;
         }
         let dropTimer = dropTimer + 1;
-        if (direction = 1) { 
+        if (direction = CMD_LEFT) { 
             if (~(playground.isHit(0, -1))) {
                 do tetromino.moveLeft();
             }
             let direction = 0;
             do Sys.wait(5);  // delays the next movement
         }
-        if (direction = 2) { 
+        if (direction = CMD_RIGHT) { 
             if (~(playground.isHit(0, 1))) {
                 do tetromino.moveRight();
             }
             let direction = 0;
             do Sys.wait(5);  // delays the next movement
         }
-        if (direction = 3) {
+        if (direction = CMD_ROTATE_L) {
+            //TODO
+            do tetromino.rotateLeft();
+            let direction = 0;
+            do Sys.wait(5);
+        }
+        if (direction = CMD_ROTATE_R) {
             //TODO
             let direction = 0;
             do Sys.wait(5);
         }
-        if (direction = 4) {
-            //TODO
-            let direction = 0;
-            do Sys.wait(5);
-        }
-        if (direction = 5) {
-            do playground.dropFast();
+        if (direction = CMD_DROPFAST) {
+            do playground.dropFastRevised();
+            do playground.refresh();
             let direction = 0;
             return;
         }
@@ -82,6 +97,8 @@ class TetrisGame {
             if (playground.isGameOver()) {
                 let dropTimer = 0;
                 let exit = true;
+                //zzzz
+                do playground.dumpPlaygroundData();
                 return;
             }
             if (~(playground.isHit(1, 0))) {
@@ -106,9 +123,10 @@ class TetrisGame {
         if (debugFlag = 3) {
             do playground.findTopFilledIndex();
         }
+        /*
         if (debugFlag = 4) {
             do playground.doFillLine();
-        }
+        } */
         if (debugFlag = 5) {
             do playground.collapse(15);
         }

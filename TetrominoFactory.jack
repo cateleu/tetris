@@ -2,7 +2,10 @@ class TetrominoFactory {
     // 0:I-Block
     // 1:O-Block
     // 2:Z-Block
+
+    // pieces: Array[7] holds Array[4][4]
     field Array pieces;
+    // iBlock: Array[4][4]
     field Array iBlock;
     field Array oBlock;
     field Array zBlock;
@@ -73,7 +76,13 @@ class TetrominoFactory {
     }
 
     method Array getTetromino(int index) {
+        
+        //zzzz
+        /*
         return pieces[index];
+        */
+        return (Utilities.copyTwoDimensionArray(pieces[index], 4));
+
     }
 
     method void debugDumpPiece(Array piece) {

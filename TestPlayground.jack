@@ -1,0 +1,141 @@
+class TestPlayground {
+    field Playground testPlayground;
+    field Tetromino tetromino;
+    field TetrominoFactory factory;
+
+    constructor TestPlayground new() {
+        let factory = TetrominoFactory.new();
+        let tetromino = Tetromino.new(factory);
+        let testPlayground = Playground.new();
+        do tetromino.setPiece(1); // set to use the square block.
+        do testPlayground.usePiece(tetromino);
+        return this;
+    }
+
+    // fill at rowIndex, col at startCol with fillLength long.
+    method void fillPlayground(int rowIndex, int startCol, int fillLength) {
+        var int maxFill, i;
+
+        let maxFill = startCol + fillLength;
+        let i = startCol;
+        while (i < maxFill) {
+            do testPlayground.set(rowIndex, i);
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void testCollapse() {
+        var boolean isEmptyLine;
+
+        do Output.printString("*** testCollapse ***");
+        do Output.println();
+
+        // at row 11, start from col 0, fill 9 blocks.
+        do fillPlayground(6, 0, 9);
+        do fillPlayground(7, 0, 9);
+        do fillPlayground(8, 0, 9);
+        do fillPlayground(9, 0, 9);
+        do fillPlayground(10, 0, 9);
+        do fillPlayground(11, 0, 9);
+        do fillPlayground(12, 0, 9);
+        do fillPlayground(14, 0, 9);
+        do fillPlayground(15, 0, 9);
+        
+        //do testPlayground.dumpPlaygroundData();
+
+        let isEmptyLine = testPlayground.isEmptyLine(13);
+        if (isEmptyLine) {
+            do Output.printString("Pass: detected empty line at 13");
+        } else {
+            do Output.printString("Fail: can't detected empty line at 13");
+        }
+        do Output.println();
+
+        // Test collapse at row 13
+        do testPlayground.collapseAt(13);
+        return;
+    }
+
+    method void testFillLine() {
+        var int rowIndex;
+        // insert a tetro at last col
+
+        // for row 11-15, all col filled except last column is empty
+        // 9 items.
+        do fillPlayground(7, 0, 9);
+        do fillPlayground(8, 0, 9);
+        do fillPlayground(9, 0, 9);
+        do fillPlayground(10, 0, 9);
+        do fillPlayground(11, 0, 9);
+        do fillPlayground(12, 0, 9);
+        do fillPlayground(13, 0, 9);
+        do fillPlayground(14, 0, 9);
+        do fillPlayground(15, 0, 9);
+
+        // now fill the last col for row 11-15.
+        // col 9 = 10th col (last)
+        //do testPlayground.set(12, 9);
+        //do testPlayground.set(13, 9);
+        do testPlayground.set(8, 9);
+        do testPlayground.set(9, 9);
+
+        // visual debug.
+        do tetromino.setRow(6);
+        do tetromino.setCol(9);
+        //do testPlayground.dumpPlaygroundData();
+
+        do testPlayground.doFillLineRevised();
+        do testPlayground.dumpPlaygroundData();
+        //zzzz
+        /*
+        do testPlayground.updateLine(13);
+        do testPlayground.updateLine(14);
+        do testPlayground.updateLine(15);
+        */
+        do testPlayground.drawSideEdges();
+        do testPlayground.refresh();
+        /*
+        let rowIndex = 15;
+        while (rowIndex > 0) {
+            do testPlayground.updateLine(rowIndex);
+            let rowIndex = rowIndex - 1;
+        }
+        */
+        return;
+    }
+
+    method void testIsHitRevised() {
+        var boolean hit;
+
+        do Screen.clearScreen();
+        do Output.println();
+        do Output.printString("*** testIsHitRevised ***");
+        do Output.println();
+
+        do tetromino.setRow(12);
+        do tetromino.setCol(0);
+        let hit = testPlayground.isHitRevised(1, 0);
+        do Output.printString("*** Row:12 hit next? Result:");
+        if (hit) {
+            do Output.printString("Pass: hit bottom");
+        } else {
+            do Output.printString("Fail: hit bottom");
+        }
+
+        do Output.println();
+        do Output.printString("*** Row:12 hit right on? Result:");
+        let hit = testPlayground.isHitRevised(0, 0);
+        if (hit) {
+            do Output.printString("Fail: not hit bottom");
+        } else {
+            do Output.printString("Pass: not hit bottom");
+        }
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

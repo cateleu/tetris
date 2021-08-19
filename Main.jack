@@ -1,9 +1,26 @@
 class Main {
     function void main() {
+        
+        /*
         var TetrisGame game;
         let game = TetrisGame.new();
         do game.run();
         do game.dispose();
+        return;
+        */
+        
+        var TestTetromino testTetromino;
+        var TestPlayground testPlayground;
+
+        let testTetromino = TestTetromino.new();
+        //do testTetromino.testGetPieceRightEdgeColIndex();
+        do testTetromino.dispose();
+
+        let testPlayground = TestPlayground.new();
+        //do testPlayground.testIsHitRevised();
+        //do testPlayground.testCollapse();
+        do testPlayground.testFillLine();
+        do testPlayground.dispose();
         return;
     }
 }

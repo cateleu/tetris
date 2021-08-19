@@ -54,4 +54,64 @@ class Utilities {
         do Output.println();
         return;
     }
+
+    function Array copyTwoDimensionArray(Array srcArray, int size) {
+        var Array targetArray, rowArray;
+        var int i;
+
+        let i = 0;
+        let targetArray = Array.new(size);
+        while (i < size) {
+            let rowArray = Utilities.copyOneDimensionArray(srcArray[i], size);
+            let targetArray[i] = rowArray;
+            let i = i + 1;
+        }
+        return targetArray;
+    }
+
+    function Array copyOneDimensionArray(Array srcArray, int size) {
+        var Array targetArray;
+        var int i;
+
+        let targetArray = Array.new(size);
+        let i = 0;
+        while (i < size) {
+            let targetArray[i] = srcArray[i];
+            let i = i + 1;
+        }
+        return targetArray;
+    }
+
+    function int getTwoDimensionArrayValue(Array array, int size, int row, int col) {
+        var Array colArray;
+        let colArray = array[row];
+        return colArray[col];
+    }
+
+    function void setTwoDimensionArrayValue(Array array, int size, int row, int col, int value) {
+        var Array rowArray;
+        let rowArray = array[row];
+        let rowArray[col] = value;
+        return;
+    }
+
+    // maxSize (n) = n by n
+    function Array initializeTwoDimensionArray(int maxSize) {
+        var Array rowArray, colArray;
+        var int i, j;
+
+        let rowArray = Array.new(maxSize);
+        let i = 0;
+        while (i < maxSize) {
+            let colArray = Array.new(maxSize);
+            let j = 0;
+            while (j < maxSize) {
+                let colArray[j] = 0;
+                let j = j + 1;
+            }
+            let rowArray[i] = colArray;
+            let i = i + 1;
+        }
+        return rowArray;
+    }
 }

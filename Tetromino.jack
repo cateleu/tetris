@@ -114,6 +114,8 @@ class Tetromino {
         return -1; // error the piece has no block!
     }
 
+    // return the top index value of the piece has block
+    // possible value 0-3
     method int getPieceTopRowIndex() {
         var int pieceTopIndex,
                 val1, val2, val3, val4;
@@ -185,13 +187,8 @@ class Tetromino {
         let piece = factory.getTetromino(randomIndex);
         let row = 0;
         let col = 0;
-        do draw(row, col);
 
         return;
-    }
-
-    method boolean isCollide() {
-        return false;
     }
 
     method void moveLeft() {
@@ -210,6 +207,33 @@ class Tetromino {
         return;
     }
 
+    method void rotateLeft() {
+        var int rowIndex, colIndex,
+                i,
+                value;
+        var Array destRowArray, srcRowArray, rotatedPieceArray;
+        
+        do erase (row, col);
+        let rotatedPieceArray = Utilities.initializeTwoDimensionArray(maxSize);
+        let colIndex = 0;
+        while (colIndex < maxSize) {
+            let rowIndex = (maxSize - 1);
+            let i = 0;
+
+            while (rowIndex > -1) {
+                let destRowArray = rotatedPieceArray[rowIndex];
+                let srcRowArray = piece[colIndex];
+                let destRowArray[colIndex] = srcRowArray[i];
+                let rowIndex = rowIndex - 1;
+                let i = i + 1;
+            }
+            let colIndex = colIndex + 1;
+        }
+        let piece = Utilities.copyTwoDimensionArray(rotatedPieceArray, maxSize);
+        do draw(row, col);
+        return;
+    }
+
     method void drop() {
         do erase(row, col);
         let row = row + 1;
@@ -217,6 +241,19 @@ class Tetromino {
         return;
     }
 
+    method void setRow(int rowNumber) {
+        let row = rowNumber;
+        return;
+    }
+
+    method void setCol(int colNumber) {
+        let col = colNumber;
+        return;
+    }
+
+    /**
+     *
+     **/
     method void dropTo(int rowIndex) {
         do erase(row, col);
         let row = rowIndex;
