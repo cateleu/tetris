@@ -56,6 +56,128 @@ class TestPlayground {
         do testPlayground.collapseAt(13);
         return;
     }
+    // Bug: when I fast drop, the last row is blank out
+    // not being erased!
+    method void testStackUp4() {
+        do testPlayground.setRowData(9,
+            0,0,0,1,0,0,0,0,0,0);
+        do testPlayground.setRowData(10,
+            0,0,1,1,0,0,0,0,0,0);
+        do testPlayground.setRowData(11,
+            0,0,1,1,1,1,0,0,0,0);
+        do testPlayground.setRowData(12,
+            0,1,1,1,1,1,0,0,1,1);
+        do testPlayground.setRowData(13,
+            0,1,1,1,1,1,1,1,1,1);
+        do testPlayground.setRowData(14,
+            0,1,1,1,1,1,1,1,1,1);
+        do testPlayground.setRowData(15,
+            0,1,1,1,1,1,1,0,1,1);
+
+       do testPlayground.drawSideEdges();
+       do tetromino.setPiece(0); // set to use the I block.
+       do tetromino.rotateLeft();
+       
+       do tetromino.setRow(8);
+       do tetromino.setCol(-1);
+       do tetromino.erase(0,0);
+       do testPlayground.usePiece(tetromino);
+       do tetromino.draw(8, -1);
+       // execute test!
+       // do testPlayground.embedPiece();
+       // do testPlayground.refresh();
+
+       do testPlayground.dropFastRevised();
+       do testPlayground.refresh();
+       //do testPlayground.dumpPlaygroundData();
+
+       return;
+   }
+
+    // Bug:
+    // the I block last block is merged with the bottom block.
+    // should move up a block up.
+    method void testStackUp3() {
+         do testPlayground.setRowData(13,
+             0,0,0,1,0,0,0,0,0,0);
+         do testPlayground.setRowData(14,
+             1,1,1,1,0,1,1,0,0,0);
+         do testPlayground.setRowData(15,
+             1,1,1,1,1,1,1,1,1,0);
+
+        do testPlayground.drawSideEdges();
+        do tetromino.setPiece(0); // set to use the I block.
+        do tetromino.rotateLeft();
+        
+        do tetromino.setRow(8);
+        do tetromino.setCol(3);
+        do tetromino.erase(0,0);
+        do testPlayground.usePiece(tetromino);
+        //do tetromino.draw(11, 3);
+        // execute test!
+        // do testPlayground.embedPiece();
+        // do testPlayground.refresh();
+        do testPlayground.dropFastRevised();
+        do testPlayground.refresh();
+        do testPlayground.dumpPlaygroundData();
+
+        return;
+    }
+    method void testStackUp2() {
+        do testPlayground.setRowData(12,
+            0,0,0,1,1,1,1,1,1,0);
+        do testPlayground.setRowData(13,
+            0,0,0,1,1,1,1,1,1,0);
+        do testPlayground.setRowData(14,
+            0,0,1,1,1,1,1,1,1,1);
+        do testPlayground.setRowData(15,
+            0,0,1,1,1,1,1,1,1,1);
+
+        do testPlayground.drawSideEdges();
+        do tetromino.setPiece(1); // set to use the O block.
+        // move to bottom left.
+        do tetromino.setRow(13);
+        do tetromino.setCol(-1);
+        // such that the piece won't show inital pos.
+        do tetromino.erase(0,0);
+        do testPlayground.usePiece(tetromino);
+        do tetromino.draw(13, -1);
+
+        // execute test!
+        do testPlayground.embedPiece();
+        do testPlayground.refresh();
+        do testPlayground.dumpPlaygroundData();
+        return;
+    }
+    method void testStackUp() {
+        do testPlayground.setRowData(12,
+            0,0,1,1,0,0,0,0,0,0);
+        do testPlayground.setRowData(13,
+            1,1,1,1,0,1,0,0,0,0);
+        do testPlayground.setRowData(14,
+            1,1,1,1,1,1,0,1,0,1);
+        do testPlayground.setRowData(15,
+            1,1,1,1,1,1,1,1,0,1);
+
+        //do testPlayground.dumpPlaygroundData();
+        do testPlayground.drawSideEdges();
+        //do testPlayground.refresh();
+
+        do tetromino.setPiece(2); // set to use the z block.
+        do tetromino.rotateLeft();
+        do tetromino.setRow(10);
+        do tetromino.setCol(3);
+        // such that the piece won't show inital pos.
+        do tetromino.erase(0,0);
+        do testPlayground.usePiece(tetromino);
+        do tetromino.draw(10, 3);
+        
+        // execute test!
+        do testPlayground.embedPiece();
+        do testPlayground.refresh();
+        do testPlayground.dumpPlaygroundData();
+        return;
+    }
 
     method void testFillLine() {
         var int rowIndex;
@@ -87,7 +209,7 @@ class TestPlayground {
 
         do testPlayground.doFillLineRevised();
         do testPlayground.dumpPlaygroundData();
-        //zzzz
+        //TODO - fix up unit test.
         /*
         do testPlayground.updateLine(13);
         do testPlayground.updateLine(14);
@@ -102,6 +224,48 @@ class TestPlayground {
             let rowIndex = rowIndex - 1;
         }
         */
+        return;
+    }
+// Test bug Z block go beyond square.
+    //  **
+    // 11** 
+    // 11
+    method void testIsHitRevised2() {
+        // testPlayground setup.
+        do testPlayground.setRowData(14,
+            1,1,0,0,0,0,0,0,0,0);
+        do testPlayground.setRowData(15,
+            1,1,0,0,0,0,0,0,0,0);
+        // Show the playground graphics first.
+        do testPlayground.drawSideEdges();
+        do testPlayground.refresh();
+
+        // tetromino setup.
+        do tetromino.setPiece(2); // use Z block
+        do tetromino.setRow(12);
+        do tetromino.setCol(1);
+        do testPlayground.usePiece(tetromino);
+        // Show the tetromino at specific location.
+        //do tetromino.draw(10, 1);
+        //do tetromino.dropTo(12);
+        
+        // Execute Test
+        // can tetromino go down one more row? at row 12.
+        // expect Yes!
+        // do Output.printString("is hit one step down?");
+        // do Output.println();
+        // if (testPlayground.isHitRevised(1, 0)) {
+        //     do Output.printString("TRUE");
+        // } else {
+        //     do Output.printString("FALSE");
+        // }
+        // do tetromino.dropTo(12);
+        
+        do testPlayground.dropFastRevised();
+        do testPlayground.embedPiece();
+        do testPlayground.refresh();
+        do testPlayground.dumpPlaygroundData();
+        
         return;
     }
 

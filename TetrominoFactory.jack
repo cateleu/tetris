@@ -76,13 +76,8 @@ class TetrominoFactory {
     }
 
     method Array getTetromino(int index) {
-        
-        //zzzz
-        /*
-        return pieces[index];
-        */
+         //TODO: fix memory leak???
         return (Utilities.copyTwoDimensionArray(pieces[index], 4));
-
     }
 
     method void debugDumpPiece(Array piece) {

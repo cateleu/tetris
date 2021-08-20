@@ -1,14 +1,12 @@
 class Main {
     function void main() {
-        
-        /*
         var TetrisGame game;
         let game = TetrisGame.new();
         do game.run();
         do game.dispose();
         return;
-        */
         
+        /*
         var TestTetromino testTetromino;
         var TestPlayground testPlayground;
 
@@ -19,8 +17,11 @@ class Main {
         let testPlayground = TestPlayground.new();
         //do testPlayground.testIsHitRevised();
         //do testPlayground.testCollapse();
-        do testPlayground.testFillLine();
+        //do testPlayground.testFillLine();
+        //do testPlayground.testStackUp4();
+        do testPlayground.testIsHitRevised2();
         do testPlayground.dispose();
         return;
+        */
     }
 }

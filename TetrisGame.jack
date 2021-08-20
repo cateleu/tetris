@@ -26,7 +26,7 @@ class TetrisGame {
 
         let direction = 0;
         let dropTimer = 0;
-        let dropTick = 10000;
+        let dropTick = 700;
         let debugFlag = 0;
         let testFlag = 0;
 
@@ -36,7 +36,6 @@ class TetrisGame {
         let CMD_ROTATE_R = 4;
         let CMD_DROPFAST = 5;
         
-
         return this;
     }
 
@@ -52,6 +51,7 @@ class TetrisGame {
     method void moveObject() {
         var char key;
         var boolean hit;
+        var int collapseAt;
 
         if (exit) {
             return;
@@ -66,50 +66,57 @@ class TetrisGame {
                 do tetromino.moveLeft();
             }
             let direction = 0;
-            do Sys.wait(5);  // delays the next movement
+            let dropTimer = 0;
         }
         if (direction = CMD_RIGHT) { 
             if (~(playground.isHit(0, 1))) {
                 do tetromino.moveRight();
             }
             let direction = 0;
-            do Sys.wait(5);  // delays the next movement
+            let dropTimer = 0;
         }
         if (direction = CMD_ROTATE_L) {
             //TODO
             do tetromino.rotateLeft();
             let direction = 0;
-            do Sys.wait(5);
+            let dropTimer = 0;
         }
         if (direction = CMD_ROTATE_R) {
             //TODO
             let direction = 0;
-            do Sys.wait(5);
         }
         if (direction = CMD_DROPFAST) {
             do playground.dropFastRevised();
-            do playground.refresh();
             let direction = 0;
+            // reset timer so after drop fast
+            // still response to move command!
+            //let dropTimer = 0;
             return;
         }
         
+        if (playground.isGameOver()) {
+            let dropTimer = 0;
+            let exit = true;
+            do playground.dumpPlaygroundData();
+            return;
+        }
+
         if (dropTimer > dropTick) {
-            if (playground.isGameOver()) {
-                let dropTimer = 0;
-                let exit = true;
-                //zzzz
-                do playground.dumpPlaygroundData();
-                return;
-            }
-            if (~(playground.isHit(1, 0))) {
+            if (~(playground.isHit(1, 0))) { 
                 do tetromino.drop();
             } else {
                 do playground.embedPiece();
+                let collapseAt = playground.doFillLineRevised();
+                if (collapseAt > -1) {
+                    do playground.doCollapse(collapseAt);
+                }
+                
                 do tetromino.generate();
+                do playground.refresh();
+                //let debugFlag = debugNeeded;
             }
             let dropTimer = 0;
         }
-
         return;
     }
 
@@ -120,13 +127,6 @@ class TetrisGame {
         if (debugFlag = 2) {
             do playground.dumpPlaygroundData();
         }
-        if (debugFlag = 3) {
-            do playground.findTopFilledIndex();
-        }
-        /*
-        if (debugFlag = 4) {
-            do playground.doFillLine();
-        } */
         if (debugFlag = 5) {
             do playground.collapse(15);
         }

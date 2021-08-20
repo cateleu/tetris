@@ -7,7 +7,7 @@ class Tetromino {
 
     field Array piece;
 
-    //zzzz debug
+     //TODO - to be remove debug
     field int randomIndex;
 
     constructor Tetromino new(TetrominoFactory tetrominoFactory) {
@@ -229,8 +229,17 @@ class Tetromino {
             }
             let colIndex = colIndex + 1;
         }
-        let piece = Utilities.copyTwoDimensionArray(rotatedPieceArray, maxSize);
+        do Utilities.copyMatrix(rotatedPieceArray, piece, maxSize);
         do draw(row, col);
+        //TODO better code?
+        let srcRowArray = rotatedPieceArray[0];
+        do srcRowArray.dispose();
+        let srcRowArray = rotatedPieceArray[1];
+        do srcRowArray.dispose();
+        let srcRowArray = rotatedPieceArray[2];
+        do srcRowArray.dispose();
+        let srcRowArray = rotatedPieceArray[3];
+        do srcRowArray.dispose();
         return;
     }
 

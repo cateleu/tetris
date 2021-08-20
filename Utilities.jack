@@ -68,6 +68,39 @@ class Utilities {
         }
         return targetArray;
     }
+    
+    function void copyMatrix(Array srcArray, Array destArray, int size) {
+        var Array srcColArray,
+                  destColArray;
+        var int rowIndex,
+                colIndex;
+
+        let rowIndex = 0;
+        while (rowIndex < size) {
+            let colIndex = 0;
+            let srcColArray = srcArray[rowIndex];
+            let destColArray = destArray[rowIndex];
+            while (colIndex < size) {
+                let destColArray[colIndex] = srcColArray[colIndex];
+                let colIndex = colIndex + 1;
+            }
+            let rowIndex = rowIndex + 1;
+        }
+        return;
+    }
+
+    function Array copyOneDimensionArrayRevised(Array srcArray, int size) {
+        var Array targetArray;
+        var int i;
+
+        let targetArray = Array.new(size);
+        let i = 0;
+        while (i < size) {
+            let targetArray[i] = srcArray[i];
+            let i = i + 1;
+        }
+        return targetArray;
+    }
 
     function Array copyOneDimensionArray(Array srcArray, int size) {
         var Array targetArray;
