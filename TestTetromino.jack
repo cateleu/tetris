@@ -1,12 +1,80 @@
 class TestTetromino {
     field Tetromino tetromino;
     field TetrominoFactory factory;
+    field Playground playground;
 
     constructor TestTetromino new() {
         let factory = TetrominoFactory.new();
         let tetromino = Tetromino.new(factory);
+        let playground = Playground.new();
         return this;
     }
+
+    method void displayTetrominoFactory() {
+        do factory.debugDumpAllPieces();
+        do Keyboard.readChar();
+        return;
+    }
+
+    method void displayZBlockTest() {
+        do playground.drawSideEdges();
+        do tetromino.setPiece(2); // set to use the Z block.
+
+        // Draw top 4 corners.
+        do tetromino.draw(0, 0);
+        do tetromino.draw(0, 7);
+        do tetromino.draw(14,0);
+        do tetromino.draw(14,7);
+
+        do Keyboard.readChar();
+        do Screen.clearScreen();
+        return;
+    }
+
+    // Tested work!!
+    method void displayOBlockTest() {
+        do playground.drawSideEdges();
+        do tetromino.setPiece(1); // set to use the I block.
+
+        // Draw top 4 corners.
+        do tetromino.draw(0, 0);
+        do tetromino.draw(0, 8);
+        do tetromino.draw(14,0);
+        do tetromino.draw(14,8);
+
+        do Keyboard.readChar();
+        do Screen.clearScreen();
+
+        return;
+    }
+
+    // Tested work!
+    method void displayIBlockTest() {
+        // horizontal I block
+        do playground.drawSideEdges();
+        do tetromino.setPiece(0); // set to use the I block.
+        do tetromino.rotateLeft();
+        // Draw top 4 corners.
+        do tetromino.draw(0, 0);
+        do tetromino.draw(0, 9);
+        do tetromino.draw(12,0);
+        do tetromino.draw(12,9);
+
+        do Sys.wait(100);
+        do Screen.clearScreen();
+
+        // straight I block
+        do playground.drawSideEdges();
+        do tetromino.setPiece(0);
+        // Draw top 4 corners.
+        do tetromino.draw(0, 0);
+        do tetromino.draw(0, 6); // Col 6,7,8,9 = 4 length
+        do tetromino.draw(15,0); 
+        do tetromino.draw(15,6);
+
+        do Sys.wait(100);
+        return;
+     }
 
     method void testGetPieceRightEdgeColIndex() {
         var int rightEdgeIndex;

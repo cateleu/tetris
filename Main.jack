@@ -1,27 +1,132 @@
 class Main {
     function void main() {
-        var TetrisGame game;
-        let game = TetrisGame.new();
-        do game.run();
-        do game.dispose();
+        do Main.menu();
         return;
-        
+
         /*
         var TestTetromino testTetromino;
         var TestPlayground testPlayground;
 
         let testTetromino = TestTetromino.new();
-        //do testTetromino.testGetPieceRightEdgeColIndex();
+        // test tetromino
+        // Tested worked!
+        //do testTetromino.displayIBlockTest();
+        do testTetromino.displayOBlockTest();
+        do testTetromino.displayZBlockTest();
         do testTetromino.dispose();
+        return;
+        */
 
+        /*
         let testPlayground = TestPlayground.new();
         //do testPlayground.testIsHitRevised();
         //do testPlayground.testCollapse();
         //do testPlayground.testFillLine();
         //do testPlayground.testStackUp4();
-        do testPlayground.testIsHitRevised2();
-        do testPlayground.dispose();
-        return;
+        //do testPlayground.testIsHitRevised2();
+        do testPlayground.testDropFastForIBlock();
+        do Output.printString("Hit any key to Continue");
+        do Keyboard.readChar();
+        do Screen.clearScreen();
+        do testPlayground.testDropFastForOBlock();
         */
+        //do testPlayground.dispose();
+        //return;
+
+        // var Tetromino tetromino;
+        // var Playground playground;
+        // var TetrominoFactory factory;
+        
+        // let factory = TetrominoFactory.new();
+        // let tetromino = Tetromino.new(factory);
+        // let playground = Playground.new();
+
+        // do tetromino.setPiece(1);
+        // do tetromino.setRow(0);
+        // do tetromino.setCol(-1);
+        // do tetromino.draw(14, -1);
+        // do playground.drawSideEdges();
+        // return;
+    }
+
+    function void menu() {
+        var char select;
+        var boolean exit;
+
+        let exit = false;
+        do Utilities.clearScreen();
+        do Output.moveCursor(0, 5);
+        do Utilities.displayLabel("TETRIS");
+        do Utilities.displayLabel("0. PLAY!");
+        do Utilities.displayLabel("1. TEST Tetromino");
+        do Utilities.displayLabel("2. TEST Playground");
+        do Utilities.displayLabel("3. TEST HitDetection");
+        
+            while ((select = 0) & (~exit)) {
+                let select = Keyboard.keyPressed();
+            }
+            if (select = 81) {
+                let exit = true;
+            }
+            if (select = 48) {
+                do Main.playGame();
+            }
+            if (select = 49) {
+                do Main.testTetromino();
+            }
+            if (select = 50) {
+                do Main.testPlayground();
+            }
+            if (select = 51) {
+                do Main.testHitDetection();
+            }
+            do Utilities.displayLabel("PRESS [SPACEBAR] TO MENU");
+            while (~(select = 32)) {
+                let select = Keyboard.keyPressed();
+            }
+            do Main.menu();
+
+        return;
+    }
+
+    function void playGame() {
+        var TetrisGame game;
+
+        do Screen.clearScreen();
+        let game = TetrisGame.new();
+        do game.run();
+        do game.dispose();
+        return;
+    }
+
+    function void testHitDetection() {
+        var TestPlayground testPlayground;
+        let testPlayground = TestPlayground.new();
+        do testPlayground.testOBlockMoveRightEdge();
+        do testPlayground.testOBlockDropBottom();
+        return;
+    }
+
+    function void testPlayground() {
+        var TestPlayground testPlayground;
+
+        let testPlayground = TestPlayground.new();
+        //do testPlayground.testDropFastForZBlock();
+        do testPlayground.testDropFastForOBlock();
+        return;
+    }
+
+    function void testTetromino() {
+        var TestTetromino testTetromino;
+
+        do Screen.clearScreen();
+        let testTetromino = TestTetromino.new();
+        // test tetromino
+        // Tested worked!
+        //do testTetromino.displayIBlockTest();
+        do testTetromino.displayOBlockTest();
+        //do testTetromino.displayZBlockTest();
+        do testTetromino.dispose();
+        return;
     }
 }

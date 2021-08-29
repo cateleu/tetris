@@ -14,6 +14,12 @@ class Utilities {
         return;
     }
 
+    function void displayLabel(String label) {
+        do Output.printString(label);
+        do Output.println();
+        return;
+    }
+
     function void displayArray10Values(Array rowArray) {
         var int maxCol, colIndex;
 
@@ -55,6 +61,19 @@ class Utilities {
         return;
     }
 
+    function void debugDisplayBoolValue(String label, boolean value) {
+        do Output.printString(label);
+        do Output.printString(":[");
+        if (value) {
+            do Output.printString("true");
+        } else {
+            do Output.printString("false");
+        }
+        do Output.printString("]");
+        do Output.println();
+        return;
+    }
+
     function Array copyTwoDimensionArray(Array srcArray, int size) {
         var Array targetArray, rowArray;
         var int i;
@@ -69,6 +88,17 @@ class Utilities {
         return targetArray;
     }
     
+    function void copyArray(Array srcArray, Array destArray, int size) {
+        var int colIndex;
+        let colIndex = 0;
+        while (colIndex < size) {
+            let destArray[colIndex] = srcArray[colIndex];
+            let colIndex = colIndex + 1;
+        }
+        return;
+    }
+
+
     function void copyMatrix(Array srcArray, Array destArray, int size) {
         var Array srcColArray,
                   destColArray;
@@ -147,4 +177,5 @@ class Utilities {
         }
         return rowArray;
     }
+
 }

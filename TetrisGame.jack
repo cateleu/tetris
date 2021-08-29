@@ -62,14 +62,14 @@ class TetrisGame {
         }
         let dropTimer = dropTimer + 1;
         if (direction = CMD_LEFT) { 
-            if (~(playground.isHit(0, -1))) {
+            if (~(playground.isHitRevised(0, -1))) {
                 do tetromino.moveLeft();
             }
             let direction = 0;
             let dropTimer = 0;
         }
         if (direction = CMD_RIGHT) { 
-            if (~(playground.isHit(0, 1))) {
+            if (~(playground.isHitRevised(0, 1))) {
                 do tetromino.moveRight();
             }
             let direction = 0;
@@ -102,7 +102,7 @@ class TetrisGame {
         }
 
         if (dropTimer > dropTick) {
-            if (~(playground.isHit(1, 0))) { 
+            if (~(playground.isHitRevised(1, 0))) { 
                 do tetromino.drop();
             } else {
                 do playground.embedPiece();
