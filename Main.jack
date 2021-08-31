@@ -104,6 +104,7 @@ class Main {
         let testPlayground = TestPlayground.new();
         do testPlayground.testOBlockMoveRightEdge();
         do testPlayground.testOBlockDropBottom();
+        do testPlayground.testOBlockIsHit(); 
         return;
     }
 

@@ -72,14 +72,15 @@ class TestPlayground {
        do tetromino.setPiece(1);
        do testPlayground.usePiece(tetromino);
        //do tetromino.draw(12,0);
-       do tetromino.setRow(5);
+       //do tetromino.setRow(5);
+       do tetromino.setRow(0);
        do tetromino.setCol(0);
        // in game move left will not have -1
 
        do testPlayground.dropFastRevised();
-       do testPlayground.embedPiece();
-       do testPlayground.refresh();
-       do testPlayground.dumpPlaygroundData();
+    //    do testPlayground.embedPiece();
+    //    do testPlayground.refresh();
+    //    do testPlayground.dumpPlaygroundData();
        return;
     }
 
@@ -302,6 +303,7 @@ class TestPlayground {
         return;
     }
 
+    // verified
     method void testOBlockMoveRightEdge() {
         do Output.println();
         do Utilities.displayLabel("[testOBlockMoveRightEdge]");
@@ -319,6 +321,7 @@ class TestPlayground {
         return;
     }
 
+    // verified
     method void testOBlockDropBottom() {
         do Output.println();
         do Utilities.displayLabel("[testOBlockDropBottom]");
@@ -331,6 +334,24 @@ class TestPlayground {
             do Output.printString("row:14 isHit+1 Expected Hit - Passed!");
         } else {
             do Output.printString("col:14 isHit+1 Expected Hit - Failed");
+        }
+        do Output.println();
+        return;
+    }
+
+    method void testOBlockIsHit() {
+        do Output.println();
+        do Utilities.displayLabel("[testOBlockIsHit]");
+
+        // tetromino setup.
+        do tetromino.setPiece(1); // use O block
+        do tetromino.setRow(0);
+        do tetromino.setCol(0);
+        do testPlayground.usePiece(tetromino);
+        if (testPlayground.isHitRevised(15, 0)) {
+            do Output.printString("row:0 isHit+15 Expected Hit - Passed!");
+        } else {
+            do Output.printString("col:0 isHit+15 Expected Hit - Failed");
         }
         do Output.println();
         return;

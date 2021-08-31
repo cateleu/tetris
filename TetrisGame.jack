@@ -110,10 +110,9 @@ class TetrisGame {
                 if (collapseAt > -1) {
                     do playground.doCollapse(collapseAt);
                 }
-                
                 do tetromino.generate();
+                // Needed: Refresh to display the result from collapse.
                 do playground.refresh();
-                //let debugFlag = debugNeeded;
             }
             let dropTimer = 0;
         }
