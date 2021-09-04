@@ -42,9 +42,7 @@ class TestTetromino {
         do tetromino.draw(14,0);
         do tetromino.draw(14,8);
 
-        do Keyboard.readChar();
-        do Screen.clearScreen();
-
+        do Utilities.promptToContinue();
         return;
     }
 
@@ -75,6 +73,60 @@ class TestTetromino {
         do Sys.wait(100);
         return;
      }
+
+     method void stressTestLeftRotate() {
+        var int maxTimes,
+                index;
+
+        do Screen.clearScreen();
+
+        do playground.drawSideEdges();
+        do tetromino.setPiece(2); // set to use the I block.
+
+        do tetromino.setRow(5);
+        do tetromino.setCol(5);
+
+        let maxTimes = 1000;
+        let index = 0;
+        while (index < maxTimes) {
+            // Draw top 4 corners.
+            do tetromino.draw(5, 5);
+            do tetromino.erase(5,5);
+            do tetromino.rotateLeft();
+            do Sys.wait(200);
+            let index = index + 1;
+        }
+        
+        do Utilities.promptToContinue();
+        return;
+    }
+
+    method void stressTestRightRotate() {
+        var int maxTimes,
+                index;
+
+        do Screen.clearScreen();
+
+        do playground.drawSideEdges();
+        do tetromino.setPiece(2); // set to use the I block.
+
+        do tetromino.setRow(5);
+        do tetromino.setCol(5);
+
+        let maxTimes = 1000;
+        let index = 0;
+        while (index < maxTimes) {
+            // Draw top 4 corners.
+            do tetromino.draw(5, 5);
+            do tetromino.erase(5,5);
+            do tetromino.rotateRight();
+            do Sys.wait(200);
+            let index = index + 1;
+        }
+        
+        do Utilities.promptToContinue();
+        return;
+    }
 
     method void testGetPieceRightEdgeColIndex() {
         var int rightEdgeIndex;

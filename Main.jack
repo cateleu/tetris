@@ -127,6 +127,8 @@ class Main {
         //do testTetromino.displayIBlockTest();
         do testTetromino.displayOBlockTest();
         //do testTetromino.displayZBlockTest();
+        //do testTetromino.stressTestLeftRotate();
+        do testTetromino.stressTestRightRotate();
         do testTetromino.dispose();
         return;
     }

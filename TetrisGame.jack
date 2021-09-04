@@ -76,14 +76,14 @@ class TetrisGame {
             let dropTimer = 0;
         }
         if (direction = CMD_ROTATE_L) {
-            //TODO
             do tetromino.rotateLeft();
             let direction = 0;
             let dropTimer = 0;
         }
         if (direction = CMD_ROTATE_R) {
-            //TODO
+            do tetromino.rotateRight();
             let direction = 0;
+            let dropTimer = 0;
         }
         if (direction = CMD_DROPFAST) {
             do playground.dropFastRevised();

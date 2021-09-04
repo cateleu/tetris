@@ -178,4 +178,15 @@ class Utilities {
         return rowArray;
     }
 
+    function void promptToContinue() {
+        var char select;
+        var boolean exit;
+
+        do Utilities.displayLabel("PRESS [SPACEBAR] TO CONTINUE");
+        while (~(select = 32)) {
+            let select = Keyboard.keyPressed();
+        }
+        return;
+    }
+
 }

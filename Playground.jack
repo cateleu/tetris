@@ -175,9 +175,9 @@ class Playground {
         let currentRowIndex = 1;
         let diff = MAXROW;
 
-        do Utilities.debugDisplayIntValue("diff", diff);
+        //do Utilities.debugDisplayIntValue("diff", diff);
         while (currentRowIndex < diff) {
-            do Utilities.debugDisplayIntValue("currentRowIndex", currentRowIndex);
+            //do Utilities.debugDisplayIntValue("currentRowIndex", currentRowIndex);
             // Check from tetromino's position + currentRowIndex to see if it is hit.
             if (~isHitRevised(currentRowIndex, 0)) {
                 let currentRowIndex = currentRowIndex + 1;
@@ -188,7 +188,7 @@ class Playground {
                 // do Utilities.debugDisplayIntValue("DropTo", dropToValue);
                 // do tetromino.dropTo(tetromino.getRow() + currentRowIndex);
                 let dropToValue = tetromino.getRow() + currentRowIndex - 1;
-                do Utilities.debugDisplayIntValue("DropTo", dropToValue);
+                //do Utilities.debugDisplayIntValue("DropTo", dropToValue);
                 do tetromino.dropTo(dropToValue);
                 return;
             }

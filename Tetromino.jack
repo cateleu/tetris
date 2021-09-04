@@ -306,10 +306,8 @@ class Tetromino {
             }
             let colIndex = colIndex + 1;
         }
+        // copy rotatedArray to piece.
         do Utilities.copyMatrix(rotatedPieceArray, piece, maxSize);
-        //zzzz
-        //do draw(row, col);
-
         //zzzz
         //TODO better code?
         let srcRowArray = rotatedPieceArray[0];
@@ -320,6 +318,46 @@ class Tetromino {
         do srcRowArray.dispose();
         let srcRowArray = rotatedPieceArray[3];
         do srcRowArray.dispose();
+        do rotatedPieceArray.dispose();
+        do draw(row, col);
+        return;
+    }
+
+    method void rotateRight() {
+        var int rowIndex, colIndex,
+                i,
+                value;
+        var Array destRowArray, srcRowArray, rotatedPieceArray;
+        
+        do erase (row, col);
+        let rotatedPieceArray = Utilities.initializeTwoDimensionArray(maxSize);
+        // rowIndex, colIndex is the dest rotated matrix.
+        let rowIndex = 0;
+        while (rowIndex < maxSize) {
+            let colIndex = 0;
+            let i = 0;
+
+            while (colIndex < maxSize) {
+                let destRowArray = rotatedPieceArray[rowIndex];
+                let srcRowArray = piece[colIndex];
+                let destRowArray[i] = srcRowArray[rowIndex];
+                let colIndex = colIndex + 1;
+                let i = i + 1;
+            }
+            let rowIndex = rowIndex + 1;
+        }
+        // copy rotatedArray to piece.
+        do Utilities.copyMatrix(rotatedPieceArray, piece, maxSize);
+        let srcRowArray = rotatedPieceArray[0];
+        do srcRowArray.dispose();
+        let srcRowArray = rotatedPieceArray[1];
+        do srcRowArray.dispose();
+        let srcRowArray = rotatedPieceArray[2];
+        do srcRowArray.dispose();
+        let srcRowArray = rotatedPieceArray[3];
+        do srcRowArray.dispose();
+        do rotatedPieceArray.dispose();
+        do draw(row, col);
         return;
     }
 
