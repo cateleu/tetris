@@ -6,6 +6,8 @@ class Tetromino {
     field int debugFlag;
 
     field Array piece;
+    field int pieceNumber;
+    field bool rotated;
 
      //TODO - to be remove debug
     field int randomIndex;
@@ -39,10 +41,16 @@ class Tetromino {
         let i = 0;
         let j = 0;
         do Output.moveCursor(6, column);
-        do Output.printString("Current:");
+        do Utilities.displayLabel("Current:");
         do Output.println();
         do Output.moveCursor(7, column);
         do factory.debugDumpPiece(piece);
+        return;
+    }
+
+    method void debugDumpPieceLocation() {
+        do Utilities.debugDisplayIntValue("row", row);
+        do Utilities.debugDisplayIntValue("col", col);
         return;
     }
 
@@ -154,28 +162,6 @@ class Tetromino {
             let pieceRightEdgeIndex = pieceRightEdgeIndex - 1;
         } // while
         return -1;
-        /*
-        var int pieceRightEdgeIndex,
-                val1, val2, val3, val4;
-        var Array rowValue;
-
-        // search from far right index.
-        let pieceRightEdgeIndex = maxSize - 1;
-        while (pieceRightEdgeIndex > -1) {
-            let rowValue = piece[pieceRightEdgeIndex];
-            let val1 = rowValue[0];
-            let val2 = rowValue[1];
-            let val3 = rowValue[2];
-            let val4 = rowValue[3];
-
-            if (((val1 = 1) | (val2 = 1)) | 
-                ((val3 = 1) | (val4 = 1))) {
-                    return pieceRightEdgeIndex;
-            }
-            let pieceRightEdgeIndex = pieceRightEdgeIndex - 1;
-        } // while
-        return -1; // error the piece has no block!
-        */
     }
 
     // return the top index value of the piece has block
@@ -247,40 +233,38 @@ class Tetromino {
 
         do piece.dispose();
         let piece = factory.getTetromino(pieceNo);
+        let pieceNumber = pieceNo;
+        let rotated = false;
         return;
     }
 
     method void generate() {
-        //TODO: randomize 
-        if (randomIndex = 0) {
-            let randomIndex = 1;
+        //TODO: randomize
+        if (randomIndex > 2) {
+            let randomIndex = 0;
         } else {
-            if (randomIndex = 1) {
-                let randomIndex = 2;
-            } else {
-                let randomIndex = 0;
-            }
+            let randomIndex = randomIndex + 1;
         }
+        
         let piece = factory.getTetromino(randomIndex);
+        let rotated = false;
+        let pieceNumber = randomIndex;
         let row = -1;
         let col = 0;
-
         return;
     }
 
     method void moveLeft() {
-        do erase (row, col);
+        do erasePiece();
         let col = col - 1;
-        do draw(row, col);
-        
+        do drawPiece();
         return;
     }
 
     method void moveRight() {
-        do erase (row, col);
+        do erasePiece();
         let col = col + 1;
-        do draw(row, col);
-
+        do drawPiece();
         return;
     }
 
@@ -290,7 +274,7 @@ class Tetromino {
                 value;
         var Array destRowArray, srcRowArray, rotatedPieceArray;
         
-        do erase (row, col);
+        do erasePiece();
         let rotatedPieceArray = Utilities.initializeTwoDimensionArray(maxSize);
         let colIndex = 0;
         while (colIndex < maxSize) {
@@ -319,7 +303,11 @@ class Tetromino {
         let srcRowArray = rotatedPieceArray[3];
         do srcRowArray.dispose();
         do rotatedPieceArray.dispose();
-        do draw(row, col);
+        
+        if (~(pieceNumber = 1)) {
+            do adjustIBlockRotation();
+        }
+        do drawPiece();
         return;
     }
 
@@ -329,7 +317,7 @@ class Tetromino {
                 value;
         var Array destRowArray, srcRowArray, rotatedPieceArray;
         
-        do erase (row, col);
+        do erasePiece();
         let rotatedPieceArray = Utilities.initializeTwoDimensionArray(maxSize);
         // rowIndex, colIndex is the dest rotated matrix.
         let rowIndex = 0;
@@ -357,13 +345,67 @@ class Tetromino {
         let srcRowArray = rotatedPieceArray[3];
         do srcRowArray.dispose();
         do rotatedPieceArray.dispose();
-        do draw(row, col);
+        
+        if ((pieceNumber = 0) | (pieceNumber = 2)) {
+            do adjustIBlockRotation();
+        }
+        do drawPiece();
+        return;
+    }
+
+    method void adjustIBlockRotation() {
+        var int width,
+                height,
+                rightEdge,
+                adjustment;
+
+        let width = getWidth();
+        let height = getHeight();
+        if (rotated) {
+            // adjust center rotation for I block.
+            if (row < 9) {
+                let row = row + 1;
+                if ((row + height - 1) > 15) {
+                    // adjust so bottom touch the edge.
+                    let row = 15 - width + 1;
+                }
+            }
+            if (col > 0) {
+                let col = col - 1;
+                let rightEdge = col + width - 1;
+                if (rightEdge > 9) {
+                    // adjust to touch the edge.
+                    let col = 9 - width + 1;
+                }
+            }
+            let rotated = false;
+        }
+        else {
+            // adjust center rotation for I block.
+            if (row > 0) {
+                let row = row - 1;
+            }
+            if (col < 9) {
+                let col = col + 1;
+            }
+            let rotated = true;
+        }
         return;
     }
 
     method void drop() {
-        do erase(row, col);
+        do erasePiece();
         let row = row + 1;
+        do drawPiece();
+        return;
+    }
+
+    method void erasePiece() {
+        do erase(row, col);
+        return;
+    }
+
+    method void drawPiece() {
         do draw(row, col);
         return;
     }
@@ -427,32 +469,6 @@ class Tetromino {
         }
         return;
     }
-
-    // method void erase(int row, int col) {
-    //     var int i, j, x, y, topIndex;
-    //     var Array value;
-
-    //     let topIndex = getPieceTopRowIndex();
-    //     let i = 0;
-    //     let y = (row * 512);
-    //     let x = col + screenOffset;
-    //     let found = false;
-        
-    //     while (topIndex < maxSize) {
-    //         let j = 0;
-    //         let value = piece[topIndex];
-    //         while (j < maxSize) {
-    //             if (value[j] = 1) {
-    //                 let found = true;
-    //                 do Graphics.eraseBlock(y + (i * 512) + x + j);
-    //             }
-    //             let j = j + 1;
-    //         }
-    //         let i = i + 1;
-    //         let topIndex = topIndex + 1;
-    //     }
-    //     return;
-    // }
 
     method void draw(int row, int col) {
         var int i, j, x, y, 

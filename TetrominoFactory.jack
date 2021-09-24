@@ -9,6 +9,8 @@ class TetrominoFactory {
     field Array iBlock;
     field Array oBlock;
     field Array zBlock;
+    field Array sBlock;
+    field Array pieceCol;
 
     constructor TetrominoFactory new() {
         var Array pieceCol;
@@ -17,62 +19,47 @@ class TetrominoFactory {
         let iBlock = Array.new(4);
         let oBlock = Array.new(4);
         let zBlock = Array.new(4);
-        let pieceCol = Array.new(4);
-
+        let sBlock = Array.new(4);
+        
         // I-Block
-        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
-        let iBlock[0] = pieceCol;
-
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 1; let pieceCol[1] = 1; let pieceCol[2] = 1; let pieceCol[3] = 1;
-        let iBlock[1] = pieceCol;
-
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
-        let iBlock[2] = pieceCol;
-
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
-        let iBlock[3] = pieceCol;
-
+        let iBlock[0] = define(0, 0, 0, 0);
+        let iBlock[1] = define(1, 1, 1, 1);
+        let iBlock[2] = define(0, 0, 0, 0);
+        let iBlock[3] = define(0, 0, 0, 0);
         // O-Block
-        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
-        let oBlock[0] = pieceCol;
+        let oBlock[0] = define(0, 0, 0, 0);
+        let oBlock[1] = define(0, 1, 1, 0);
+        let oBlock[2] = define(0, 1, 1, 0);
+        let oBlock[3] = define(0, 0, 0, 0);
+        // z-Block
+        let zBlock[0] = define(0, 0, 0, 0);
+        let zBlock[1] = define(1, 1, 0, 0);
+        let zBlock[2] = define(0, 1, 1, 0);
+        let zBlock[3] = define(0, 0, 0, 0);
+        // s-Block
+        let sBlock[0] = define(0, 0, 0, 0);
+        let sBlock[1] = define(0, 1, 1, 0);
+        let sBlock[2] = define(1, 1, 0, 0);
+        let sBlock[3] = define(0, 0, 0, 0);
 
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 0; let pieceCol[1] = 1; let pieceCol[2] = 1; let pieceCol[3] = 0;
-        let oBlock[1] = pieceCol;
-
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 0; let pieceCol[1] = 1; let pieceCol[2] = 1; let pieceCol[3] = 0;
-        let oBlock[2] = pieceCol;
-
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
-        let oBlock[3] = pieceCol;
-
-        // Z-Block
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
-        let zBlock[0] = pieceCol;
-
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 1; let pieceCol[1] = 1; let pieceCol[2] = 0; let pieceCol[3] = 0;
-        let zBlock[1] = pieceCol;
-
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 0; let pieceCol[1] = 1; let pieceCol[2] = 1; let pieceCol[3] = 0;
-        let zBlock[2] = pieceCol;
-
-        let pieceCol = Array.new(4);
-        let pieceCol[0] = 0; let pieceCol[1] = 0; let pieceCol[2] = 0; let pieceCol[3] = 0;
-        let zBlock[3] = pieceCol;
-
+        // Assign tetromino into pieces array.
         let pieces[0] = iBlock;
         let pieces[1] = oBlock;
         let pieces[2] = zBlock;
+        let pieces[3] = sBlock;
 
         return this;
+    }
+
+    // Create and return an Array of 4 integers
+    method Array define(int col0, int col1, int col2, int col3) {
+        var Array column;
+        let column = Array.new(4);
+        let column[0] = col0;
+        let column[1] = col1;
+        let column[2] = col2;
+        let column[3] = col3;
+        return column;
     }
 
     method Array getTetromino(int index) {
@@ -124,6 +111,13 @@ class TetrominoFactory {
     }
 
     method void dispose() {
+        //zzzz
+        // do Memory.deAlloc(pieces);
+        // do Memory.deAlloc(iBlock);
+        // do Memory.deAlloc(oBlock);
+        // do Memory.deAlloc(zBlock);
+        // do Memory.deAlloc(pieceCol);
+
         do Memory.deAlloc(this);
         return;
     }
