@@ -182,6 +182,8 @@ class Utilities {
         var char select;
         var boolean exit;
 
+        let select = 0;
+        do Sys.wait(500);
         do Utilities.displayLabel("PRESS [SPACEBAR] TO CONTINUE");
         while (~(select = 32)) {
             let select = Keyboard.keyPressed();

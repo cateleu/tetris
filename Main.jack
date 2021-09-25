@@ -2,51 +2,6 @@ class Main {
     function void main() {
         do Main.menu();
         return;
-
-        /*
-        var TestTetromino testTetromino;
-        var TestPlayground testPlayground;
-
-        let testTetromino = TestTetromino.new();
-        // test tetromino
-        // Tested worked!
-        //do testTetromino.displayIBlockTest();
-        do testTetromino.displayOBlockTest();
-        do testTetromino.displayZBlockTest();
-        do testTetromino.dispose();
-        return;
-        */
-
-        /*
-        let testPlayground = TestPlayground.new();
-        //do testPlayground.testIsHitRevised();
-        //do testPlayground.testCollapse();
-        //do testPlayground.testFillLine();
-        //do testPlayground.testStackUp4();
-        //do testPlayground.testIsHitRevised2();
-        do testPlayground.testDropFastForIBlock();
-        do Output.printString("Hit any key to Continue");
-        do Keyboard.readChar();
-        do Screen.clearScreen();
-        do testPlayground.testDropFastForOBlock();
-        */
-        //do testPlayground.dispose();
-        //return;
-
-        // var Tetromino tetromino;
-        // var Playground playground;
-        // var TetrominoFactory factory;
-        
-        // let factory = TetrominoFactory.new();
-        // let tetromino = Tetromino.new(factory);
-        // let playground = Playground.new();
-
-        // do tetromino.setPiece(1);
-        // do tetromino.setRow(0);
-        // do tetromino.setCol(-1);
-        // do tetromino.draw(14, -1);
-        // do playground.drawSideEdges();
-        // return;
     }
 
     function void menu() {
@@ -102,9 +57,32 @@ class Main {
     function void testHitDetection() {
         var TestPlayground testPlayground;
         let testPlayground = TestPlayground.new();
+
         do testPlayground.testOBlockMoveRightEdge();
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
         do testPlayground.testOBlockDropBottom();
-        do testPlayground.testOBlockIsHit(); 
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
+        do testPlayground.testOBlockIsHit();
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
+        do testPlayground.testIBlockMoveRightEdge();
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
+        do testPlayground.testIBlockDropBottom();
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
+        do testPlayground.testIBlockHitPlayground();
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
+        do testPlayground.testZBlockHitPlayground();
         return;
     }
 
@@ -112,8 +90,16 @@ class Main {
         var TestPlayground testPlayground;
 
         let testPlayground = TestPlayground.new();
-        //do testPlayground.testDropFastForZBlock();
+        do testPlayground.clearPlaygroundData();
+        do testPlayground.testDropFastForZBlock();
         do testPlayground.testDropFastForOBlock();
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
+        do testPlayground.clearPlaygroundData(); 
+        do testPlayground.testDropFastStacking();
+        
+        do testPlayground.dispose();
         return;
     }
 
@@ -124,11 +110,24 @@ class Main {
         let testTetromino = TestTetromino.new();
         // test tetromino
         // Tested worked!
-        //do testTetromino.displayIBlockTest();
+        do testTetromino.displayIBlockTest();
+        do Utilities.promptToContinue();
+        do testTetromino.displayIBlockRotatedTest();
+        do Utilities.promptToContinue();
         do testTetromino.displayOBlockTest();
-        //do testTetromino.displayZBlockTest();
-        //do testTetromino.stressTestLeftRotate();
-        do testTetromino.stressTestRightRotate();
+        do Utilities.promptToContinue();
+        do testTetromino.displayZBlockTest();
+        do Utilities.promptToContinue(); 
+        // Test I block rotation.
+        do testTetromino.stressTestLeftRotate(0);
+        do Utilities.promptToContinue();
+        do testTetromino.stressTestRightRotate(0);
+        do Utilities.promptToContinue();
+        // Test Z block rotation.
+        do testTetromino.stressTestLeftRotate(2);
+        do Utilities.promptToContinue();
+        do testTetromino.stressTestRightRotate(2);
+        do Utilities.promptToContinue();
         do testTetromino.dispose();
         return;
     }

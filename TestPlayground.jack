@@ -12,6 +12,17 @@ class TestPlayground {
         return this;
     }
 
+    method void clearPlaygroundData() {
+        var int i;
+        let i = 0;
+        while (i < 16) {
+            do testPlayground.setRowData(i,
+                0,0,0,0,0,0,0,0,0,0);
+            let i = i + 1;
+        }
+        return;
+    }
+
     // fill at rowIndex, col at startCol with fillLength long.
     method void fillPlayground(int rowIndex, int startCol, int fillLength) {
         var int maxFill, i;
@@ -22,6 +33,23 @@ class TestPlayground {
             do testPlayground.set(rowIndex, i);
             let i = i + 1;
         }
+        return;
+    }
+
+    method void testDropFastStacking() {
+        do testDropFastForOBlock();
+        // Test Z block
+        do tetromino.setPiece(2);
+        do testPlayground.usePiece(tetromino);
+        do tetromino.draw(5,0);
+        do tetromino.setRow(5);
+        do tetromino.setCol(1);
+        // in game move left will not have -1
+
+        do testPlayground.dropFastRevised();
+        do testPlayground.embedPiece();
+        do testPlayground.refresh();
+        do testPlayground.dumpPlaygroundData();
         return;
     }
 
@@ -46,22 +74,6 @@ class TestPlayground {
     }
 
     method void testDropFastForOBlock() {
-        
-    /*
-       do testPlayground.drawSideEdges();
-        // Test O block
-       do tetromino.setPiece(1);
-       do testPlayground.usePiece(tetromino);
-       do tetromino.draw(12,0);
-       do tetromino.setRow(12);
-       do tetromino.setCol(0);
-       // delta +1 row.
-       
-       let testResult = testPlayground.isHitRevised(3, 0);
-       do Utilities.debugDisplayBoolValue("isHit+2 Exp NotHit - Pass?", ~testPlayground.isHitRevised(2, 0));
-       do Utilities.debugDisplayBoolValue("isHit+3 Exp Hit - Pass?", testPlayground.isHitRevised(3, 0));
-       do Utilities.debugDisplayBoolValue("isHit+4 Exp Hit - Pass?", testPlayground.isHitRevised(4, 0));
-    */   
        do Output.printString("Hit any key to Continue");
        do Keyboard.readChar();
        do Screen.clearScreen();
@@ -78,9 +90,9 @@ class TestPlayground {
        // in game move left will not have -1
 
        do testPlayground.dropFastRevised();
-    //    do testPlayground.embedPiece();
-    //    do testPlayground.refresh();
-    //    do testPlayground.dumpPlaygroundData();
+       do testPlayground.embedPiece();
+       do testPlayground.refresh();
+       do testPlayground.dumpPlaygroundData();
        return;
     }
 
@@ -328,7 +340,8 @@ class TestPlayground {
         // tetromino setup.
         do tetromino.setPiece(1); // use O block
         do tetromino.setRow(14);
-        do tetromino.setCol(8);
+        //do tetromino.setCol(8);
+        do tetromino.setCol(0);
         do testPlayground.usePiece(tetromino);
         if (testPlayground.isHitRevised(1, 0)) {
             do Output.printString("row:14 isHit+1 Expected Hit - Passed!");
@@ -339,6 +352,7 @@ class TestPlayground {
         return;
     }
 
+    // verified
     method void testOBlockIsHit() {
         do Output.println();
         do Utilities.displayLabel("[testOBlockIsHit]");
@@ -357,11 +371,104 @@ class TestPlayground {
         return;
     }
 
+    // verified
+    method void testIBlockMoveRightEdge() {
+        do Screen.clearScreen();
+        do Output.println();
+        do testPlayground.drawSideEdges();
+        do Utilities.displayLabel("[testIBlockMoveRightEdge]");
+        // tetromino setup.
+        do tetromino.setPiece(0); // use I block
+        do tetromino.setRow(0);
+        do tetromino.setCol(9);
+        do testPlayground.usePiece(tetromino);
+
+        // now rotate left 3 times and test
+        do tetromino.setRow(0);
+        do tetromino.setCol(5);
+        do Sys.wait(200);
+        do tetromino.rotateLeft();
+        do Sys.wait(200);
+        do tetromino.rotateLeft();
+        do Sys.wait(200);
+        do tetromino.rotateLeft();
+        do Sys.wait(200);
+        do tetromino.moveRight();
+        do Sys.wait(200);
+        do tetromino.moveRight();
+        
+        if (testPlayground.isHitRevised(0, 1)) {
+            do Output.printString("col:8 isHit+1 Expected No Hit - Failed!");
+        } else {
+            do Output.printString("col:8 isHit+1 Expected No Hit - Passed");
+        }
+        do Output.println();
+        return;
+    }
+
+    method void testIBlockDropBottom() {
+        do Output.println();
+        do Utilities.displayLabel("[testIBlockDropBottom - horizonal]");
+        // tetromino setup.
+        do tetromino.setPiece(0); // use I block
+        do tetromino.setRow(15);
+        do tetromino.setCol(0);
+        do testPlayground.usePiece(tetromino);
+        if (testPlayground.isHitRevised(1, 0)) {
+            do Output.printString("row:15 isHit+1 Expected Hit - Passed!");
+        } else {
+            do Output.printString("col:15 isHit+1 Expected Hit - Failed");
+        }
+        do Output.println();
+        return;
+    }
+
+    // Test bug I block go beyond square.
+    // ****
+    // 11 
+    // 11
+    method void testIBlockHitPlayground() {
+        // testPlayground setup.
+        do testPlayground.setRowData(14,
+            1,1,0,0,0,0,0,0,0,0);
+        do testPlayground.setRowData(15,
+            1,1,0,0,0,0,0,0,0,0);
+        // Show the playground graphics first.
+        do testPlayground.drawSideEdges();
+        do testPlayground.refresh();
+
+        // tetromino setup.
+        do tetromino.setPiece(0); // use I block
+        do tetromino.setRow(13);
+        do tetromino.setCol(0);
+        do testPlayground.usePiece(tetromino);
+        do tetromino.drawPiece();
+        
+        // Execute Test
+        // can tetromino go down one more row? at row 12.
+        // expect Yes!
+        // do Output.printString("is hit one step down?");
+        // do Output.println();
+        if (testPlayground.isHitRevised(1, 0)) {
+            do Output.printString("TRUE");
+        } else {
+            do Output.printString("FALSE");
+        }
+        // do tetromino.dropTo(12);
+        
+        // do testPlayground.dropFastRevised();
+        // do testPlayground.embedPiece();
+        // do testPlayground.refresh();
+        // do testPlayground.dumpPlaygroundData();
+        
+        return;
+    }
+
     // Test bug Z block go beyond square.
     //  **
     // 11** 
     // 11
-    method void testIsHitRevised2() {
+    method void testZBlockHitPlayground() {
         // testPlayground setup.
         do testPlayground.setRowData(14,
             1,1,0,0,0,0,0,0,0,0);
@@ -385,18 +492,32 @@ class TestPlayground {
         // expect Yes!
         // do Output.printString("is hit one step down?");
         // do Output.println();
-        // if (testPlayground.isHitRevised(1, 0)) {
-        //     do Output.printString("TRUE");
-        // } else {
-        //     do Output.printString("FALSE");
-        // }
-        // do tetromino.dropTo(12);
+        if (testPlayground.isHitRevised(1, 0)) {
+            do Utilities.displayLabel("row:12 isHit+1 Expected NOT Hit - Failed!");
+        } else {
+            do Utilities.displayLabel("row:12 isHit+1 Expected NOT Hit - Passed");
+        }
+
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
+
+        do tetromino.setRow(13);
+        do tetromino.setCol(1);
+        if (testPlayground.isHitRevised(1, 0)) {
+            do Utilities.displayLabel("row:13 isHit+1 Expected Hit - Passed!");
+        } else {
+            do Utilities.displayLabel("row:13 isHit+1 Expected Hit - Failed!");
+        }
+        //do tetromino.dropTo(13);
         
-        do testPlayground.dropFastRevised();
-        do testPlayground.embedPiece();
-        do testPlayground.refresh();
-        do testPlayground.dumpPlaygroundData();
-        
+        // do testPlayground.dropFastRevised();
+        // do testPlayground.embedPiece();
+        // do testPlayground.refresh();
+        // do testPlayground.dumpPlaygroundData();
+        do Sys.wait(500);
+        do Utilities.promptToContinue();
+        do Screen.clearScreen();
         return;
     }
 
@@ -430,6 +551,10 @@ class TestPlayground {
     }
 
     method void dispose() {
+        do testPlayground.dispose();
+        do tetromino.dispose();
+        do factory.dispose();
+
         do Memory.deAlloc(this);
         return;
     }

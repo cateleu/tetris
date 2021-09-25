@@ -17,6 +17,7 @@ class TestTetromino {
     }
 
     method void displayZBlockTest() {
+        do Screen.clearScreen();
         do playground.drawSideEdges();
         do tetromino.setPiece(2); // set to use the Z block.
 
@@ -25,43 +26,28 @@ class TestTetromino {
         do tetromino.draw(0, 7);
         do tetromino.draw(14,0);
         do tetromino.draw(14,7);
-
-        do Keyboard.readChar();
-        do Screen.clearScreen();
         return;
     }
 
     // Tested work!!
     method void displayOBlockTest() {
+        do Screen.clearScreen();
         do playground.drawSideEdges();
-        do tetromino.setPiece(1); // set to use the I block.
+        do tetromino.setPiece(1); // set to use the O block.
 
         // Draw top 4 corners.
         do tetromino.draw(0, 0);
         do tetromino.draw(0, 8);
         do tetromino.draw(14,0);
         do tetromino.draw(14,8);
-
-        do Utilities.promptToContinue();
         return;
     }
 
     // Tested work!
     method void displayIBlockTest() {
-        // horizontal I block
-        do playground.drawSideEdges();
-        do tetromino.setPiece(0); // set to use the I block.
-        do tetromino.rotateLeft();
-        // Draw top 4 corners.
-        do tetromino.draw(0, 0);
-        do tetromino.draw(0, 9);
-        do tetromino.draw(12,0);
-        do tetromino.draw(12,9);
-
-        do Sys.wait(100);
         do Screen.clearScreen();
-
-        // straight I block
+        
+        // horizontal I block
         do playground.drawSideEdges();
         do tetromino.setPiece(0);
         // Draw top 4 corners.
@@ -69,54 +55,64 @@ class TestTetromino {
         do tetromino.draw(0, 6); // Col 6,7,8,9 = 4 length
         do tetromino.draw(15,0); 
         do tetromino.draw(15,6);
-
-        do Sys.wait(100);
         return;
      }
 
-     method void stressTestLeftRotate() {
-        var int maxTimes,
-                index;
-
+     method void displayIBlockRotatedTest() {
         do Screen.clearScreen();
-
+        
+        // vertical I block
         do playground.drawSideEdges();
-        do tetromino.setPiece(2); // set to use the I block.
+        do tetromino.setPiece(0); // set to use the I block.
+        do tetromino.setRow(0);
+        do tetromino.setCol(0);
+        do tetromino.rotateLeft();
+        // rotate left push the piece off 1 position to the right.
+        // move left to be on the edge.
+        do tetromino.moveLeft();
+        return;
+     }
 
-        do tetromino.setRow(5);
-        do tetromino.setCol(5);
+     method void stressTestLeftRotate(int pieceNo) {
+        var int maxTimes,
+                index,
+                row, col;
 
-        let maxTimes = 1000;
+        let row = 5;
+        let col = 5;
+        do Screen.clearScreen();
+        do playground.drawSideEdges();
+        do tetromino.setPiece(pieceNo); 
+
+        do tetromino.setRow(row);
+        do tetromino.setCol(col);
+        
+        let maxTimes = 10;
         let index = 0;
         while (index < maxTimes) {
-            // Draw top 4 corners.
-            do tetromino.draw(5, 5);
-            do tetromino.erase(5,5);
-            do tetromino.rotateLeft();
+            do tetromino.drawPiece();
             do Sys.wait(200);
+            do tetromino.rotateLeft();
+            // too fast screen flick!
             let index = index + 1;
         }
-        
-        do Utilities.promptToContinue();
         return;
     }
 
-    method void stressTestRightRotate() {
+    method void stressTestRightRotate(int pieceNo) {
         var int maxTimes,
                 index;
 
         do Screen.clearScreen();
-
         do playground.drawSideEdges();
-        do tetromino.setPiece(2); // set to use the I block.
+        do tetromino.setPiece(pieceNo); 
 
         do tetromino.setRow(5);
         do tetromino.setCol(5);
 
-        let maxTimes = 1000;
+        let maxTimes = 10;
         let index = 0;
         while (index < maxTimes) {
-            // Draw top 4 corners.
             do tetromino.draw(5, 5);
             do tetromino.erase(5,5);
             do tetromino.rotateRight();
@@ -124,7 +120,6 @@ class TestTetromino {
             let index = index + 1;
         }
         
-        do Utilities.promptToContinue();
         return;
     }
 
