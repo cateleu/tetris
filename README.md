@@ -9,10 +9,5 @@ Compile:
 ./JackCompiler.sh Tetris
 
 TODO:
-- fill line
-- left/right edge detection
-- left/right collide detection
-- rotation for existing piece
-- add remaining tetromino
-- add scroe
+- add score
 - add associated debug
