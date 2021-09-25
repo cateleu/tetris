@@ -240,12 +240,11 @@ class Tetromino {
 
     method void generate() {
         //TODO: randomize
-        if (randomIndex > 2) {
+        if (randomIndex > 5) {
             let randomIndex = 0;
         } else {
             let randomIndex = randomIndex + 1;
         }
-        
         let piece = factory.getTetromino(randomIndex);
         let rotated = false;
         let pieceNumber = randomIndex;
