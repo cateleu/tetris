@@ -184,11 +184,12 @@ class Playground {
             } else {
                 // it was checked currentRowIndex is hit, so drop to currentRowIndex - 1
                 // from the tetromino position.
-                // let dropToValue = tetromino.getRow() + currentRowIndex;
-                // do Utilities.debugDisplayIntValue("DropTo", dropToValue);
+                
+                // do Utilities.debugDisplayIntValue("t row", tetromino.getRow());
+                // do Utilities.debugDisplayIntValue("currentRowIndex", currentRowIndex);
                 // do tetromino.dropTo(tetromino.getRow() + currentRowIndex);
                 let dropToValue = tetromino.getRow() + currentRowIndex - 1;
-                //do Utilities.debugDisplayIntValue("DropTo", dropToValue);
+                // do Utilities.debugDisplayIntValue("DropTo", dropToValue);
                 do tetromino.dropTo(dropToValue);
                 return;
             }
@@ -556,7 +557,7 @@ class Playground {
         }
         return false;
     }
-
+    
     // dRow - delta.
     // e.g. dRow = 1 what if the current tetromino is at row + 1?
     method boolean isHitRevised(int dRow, int dCol) {
@@ -568,64 +569,80 @@ class Playground {
                 pgCol,
                 i,j,
                 leftEdgeIndex,
-                colOffset,
+                rightEdgeIndex,
                 topIndex,
-                rowOffset;
+                bottomIndex,
+                rowCountIndex,
+                colCountIndex,
+                rowRange,
+                colRange;
 
         let currentPieceRowPos = tetromino.getRow();
         let currentPieceColPos = tetromino.getCol();
-        // from bottom
-        let i = tetromino.getPieceBottomRowIndex();
+        
         let leftEdgeIndex = tetromino.getPieceLeftEdgeIndex();
-        if (leftEdgeIndex > 0) {
-            let colOffset = -1;
-        }
+        let rightEdgeIndex = tetromino.getPieceRightEdgeIndex();
         let topIndex = tetromino.getPieceTopRowIndex();
-        if (topIndex > 0) {
-            let rowOffset = -1;
-        }
-
-        //zzzz
-        // do Utilities.debugDisplayIntValue("piece row", currentPieceRowPos);
-        // do Utilities.debugDisplayIntValue("piece col", currentPieceColPos);
-        let pgRow = tetromino.getRow() + dRow + tetromino.getHeight() - 1;
+        let bottomIndex = tetromino.getPieceBottomRowIndex();
+        // from bottom
+        let rowCountIndex = bottomIndex - topIndex;
+        let colCountIndex = rightEdgeIndex - leftEdgeIndex;
+        let rowRange = rowCountIndex;
+        let colRange = colCountIndex;
+        // do Utilities.debugDisplayIntValue("**rowCountIndex", rowCountIndex);
+        // do Utilities.debugDisplayIntValue("**colCountIndex", colCountIndex);
+        let i = bottomIndex;
         //
         // go through piece, for i,j that has a block,
         // find the associated row, col on playground,
         // see if it has a block.
         // If it has a block, means collide with piece.
-        while (i > -1) {
-            let pgCol = tetromino.getCol() + dCol + tetromino.getWidth() - 1;
+        while (rowCountIndex > -1) {
+            // do Utilities.debugDisplayIntValue("rowCountIndex", rowCountIndex);
             // from right edge
-            let j = tetromino.getPieceRightEdgeIndex();
-            while ((j > 0) | (j = 0)) {
+            let j = rightEdgeIndex;
+            let colCountIndex = rightEdgeIndex - leftEdgeIndex;
+            //do Utilities.debugDisplayIntValue("j", j);
+            while (colCountIndex > -1) {
+                //do Utilities.debugDisplayIntValue("colCountIndex", colCountIndex);
                 let pieceValue = tetromino.getPieceValue(i, j);
                 if (pieceValue > 0) {
                     // do Utilities.debugDisplayIntValue("i", i);
                     // do Utilities.debugDisplayIntValue("j", j);
-                    // do Utilities.debugDisplayIntValue("pRow", tetromino.getRow());
-                    // do Utilities.debugDisplayIntValue("pCol", tetromino.getCol());
-                    let pgRow = currentPieceRowPos + dRow + i + rowOffset;
-                    let pgCol = currentPieceColPos + dCol + j + colOffset;
+                    if (rowRange > 0) {
+                        let pgRow = currentPieceRowPos + dRow + rowCountIndex;
+                    } else {
+                        let pgRow = currentPieceRowPos + dRow;
+                    }
+                    
+                    if (colRange > 0) {
+                        let pgCol = currentPieceColPos + dCol + colCountIndex;
+                    } else {
+                        let pgCol = currentPieceColPos + dCol;
+                    }
                     // do Utilities.debugDisplayIntValue("pgRow:", pgRow);
                     // do Utilities.debugDisplayIntValue("pgCol:", pgCol);
                     if ((pgRow = MAXROW) | (pgRow > MAXROW)) {
-                        //do Utilities.debugDisplayIntValue("reach max", 1);
+                        // do Utilities.displayLabel("reach max row");
                         return true;
                     }
                     if ((pgCol = MAXCOL) | (pgCol > MAXCOL)) {
+                        // do Utilities.displayLabel("reach max col");
                         return true;
                     }  
                     let playgroundValue = getValue(pgRow, pgCol);
                     if (playgroundValue > 0) {
+                        // do Utilities.displayLabel("hit playground");
                         return true;
                     }
                 }
                 let pgCol = pgCol - 1;
                 let j = j - 1;
+                let colCountIndex = colCountIndex - 1;
             }
             let pgRow = pgRow - 1;            
             let i = i - 1;
+            let rowCountIndex = rowCountIndex - 1;
         }
         return false;
     }
