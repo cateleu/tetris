@@ -66,24 +66,20 @@ class TetrisGame {
                 do tetromino.moveLeft();
             }
             let direction = 0;
-            let dropTimer = 0;
         }
         if (direction = CMD_RIGHT) { 
             if (~(playground.isHitRevised(0, 1))) {
                 do tetromino.moveRight();
             }
             let direction = 0;
-            let dropTimer = 0;
         }
         if (direction = CMD_ROTATE_L) {
             do tetromino.rotateLeft();
             let direction = 0;
-            let dropTimer = 0;
         }
         if (direction = CMD_ROTATE_R) {
             do tetromino.rotateRight();
             let direction = 0;
-            let dropTimer = 0;
         }
         if (direction = CMD_DROPFAST) {
             do playground.dropFastRevised();
