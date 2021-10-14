@@ -366,7 +366,6 @@ class Tetromino {
         if (rotated) {
             // adjust center rotation for I block.
             if (row < 9) {
-                let row = row + 1;
                 if ((row + height - 1) > 15) {
                     // adjust so bottom touch the edge.
                     let row = 15 - width + 1;
@@ -384,9 +383,6 @@ class Tetromino {
         }
         else {
             // adjust center rotation for I block.
-            if (row > 0) {
-                let row = row - 1;
-            }
             if (col < 9) {
                 let col = col + 1;
             }

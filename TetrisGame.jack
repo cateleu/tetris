@@ -65,20 +65,24 @@ class TetrisGame {
             if (~(playground.isHitRevised(0, -1))) {
                 do tetromino.moveLeft();
             }
+            do moveBuffer();
             let direction = 0;
         }
         if (direction = CMD_RIGHT) { 
             if (~(playground.isHitRevised(0, 1))) {
                 do tetromino.moveRight();
             }
+            do moveBuffer();
             let direction = 0;
         }
         if (direction = CMD_ROTATE_L) {
             do tetromino.rotateLeft();
+            do moveBuffer();
             let direction = 0;
         }
         if (direction = CMD_ROTATE_R) {
             do tetromino.rotateRight();
+            do moveBuffer();
             let direction = 0;
         }
         if (direction = CMD_DROPFAST) {
@@ -86,7 +90,7 @@ class TetrisGame {
             let direction = 0;
             // reset timer so after drop fast
             // still response to move command!
-            //let dropTimer = 0;
+            let dropTimer = 0;
             return;
         }
         
@@ -110,6 +114,13 @@ class TetrisGame {
                 // Needed: Refresh to display the result from collapse.
                 do playground.refresh();
             }
+            let dropTimer = 0;
+        }
+        return;
+    }
+
+    method void moveBuffer() {
+        if ((playground.isHitRevised(1, 0))) {
             let dropTimer = 0;
         }
         return;
