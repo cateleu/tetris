@@ -128,6 +128,27 @@ class Main {
         do Utilities.promptToContinue();
         do testTetromino.stressTestRightRotate(2);
         do Utilities.promptToContinue();
+        // Test S block rotation.
+        do testTetromino.stressTestLeftRotate(3);
+        do Utilities.promptToContinue();
+        do testTetromino.stressTestRightRotate(3);
+        do Utilities.promptToContinue();
+        // Test J block rotation.
+        do testTetromino.stressTestLeftRotate(4);
+        do Utilities.promptToContinue();
+        do testTetromino.stressTestRightRotate(4);
+        do Utilities.promptToContinue();
+        // Test L block rotation.
+        do testTetromino.stressTestLeftRotate(5);
+        do Utilities.promptToContinue();
+        do testTetromino.stressTestRightRotate(5);
+        do Utilities.promptToContinue();
+        // Test T block rotation.
+        do testTetromino.stressTestLeftRotate(6);
+        do Utilities.promptToContinue();
+        do testTetromino.stressTestRightRotate(6);
+        do Utilities.promptToContinue();
+
         do testTetromino.dispose();
         return;
     }

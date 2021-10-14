@@ -304,55 +304,58 @@ class Tetromino {
         do rotatedPieceArray.dispose();
         
         if (~(pieceNumber = 1)) {
-            do adjustIBlockRotation();
+            do adjustRotation();
         }
         do drawPiece();
         return;
     }
 
     method void rotateRight() {
-        var int rowIndex, colIndex,
-                i,
-                value;
-        var Array destRowArray, srcRowArray, rotatedPieceArray;
-        
-        do erasePiece();
-        let rotatedPieceArray = Utilities.initializeTwoDimensionArray(maxSize);
-        // rowIndex, colIndex is the dest rotated matrix.
-        let rowIndex = 0;
-        while (rowIndex < maxSize) {
-            let colIndex = 0;
-            let i = 0;
+        var int rowIndex,
+                destColIndex,
+                destRowIndex,
+                sourceIndex;
+        var Array destMatrixArray,
+                  destRowArray,
+                  srcRowArray;
 
-            while (colIndex < maxSize) {
-                let destRowArray = rotatedPieceArray[rowIndex];
-                let srcRowArray = piece[colIndex];
-                let destRowArray[i] = srcRowArray[rowIndex];
-                let colIndex = colIndex + 1;
-                let i = i + 1;
+        do erasePiece();
+        let destMatrixArray = Utilities.initializeTwoDimensionArray(maxSize);
+        let rowIndex = 0;
+        let destColIndex = maxSize - 1;
+        let sourceIndex = 0;
+
+        while (rowIndex < maxSize) {
+            let srcRowArray = piece[rowIndex];
+            let sourceIndex = 0;
+            while (sourceIndex < maxSize) {
+                let srcRowArray = piece[rowIndex];
+                let destRowArray = destMatrixArray[sourceIndex];
+                let destRowArray[destColIndex] = srcRowArray[sourceIndex];
+                let sourceIndex = sourceIndex + 1;
             }
+            let destColIndex = destColIndex - 1;
             let rowIndex = rowIndex + 1;
         }
-        // copy rotatedArray to piece.
-        do Utilities.copyMatrix(rotatedPieceArray, piece, maxSize);
-        let srcRowArray = rotatedPieceArray[0];
-        do srcRowArray.dispose();
-        let srcRowArray = rotatedPieceArray[1];
-        do srcRowArray.dispose();
-        let srcRowArray = rotatedPieceArray[2];
-        do srcRowArray.dispose();
-        let srcRowArray = rotatedPieceArray[3];
-        do srcRowArray.dispose();
-        do rotatedPieceArray.dispose();
-        
-        if ((pieceNumber = 0) | (pieceNumber = 2)) {
-            do adjustIBlockRotation();
+
+        do Utilities.copyMatrix(destMatrixArray, piece, maxSize);
+        if (~(pieceNumber = 1)) {
+            do adjustRotation();
         }
         do drawPiece();
+        // release memory
+        let destRowArray = destMatrixArray[0];
+        do destRowArray.dispose();
+        let destRowArray = destMatrixArray[1];
+        do destRowArray.dispose();
+        let destRowArray = destMatrixArray[2];
+        do destRowArray.dispose();
+        let destRowArray = destMatrixArray[3];
+        do destRowArray.dispose();
         return;
     }
 
-    method void adjustIBlockRotation() {
+    method void adjustRotation() {
         var int width,
                 height,
                 rightEdge,

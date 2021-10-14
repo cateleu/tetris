@@ -2,6 +2,10 @@ class TetrominoFactory {
     // 0:I-Block
     // 1:O-Block
     // 2:Z-Block
+    // 3:S-Block
+    // 4:J-Block
+    // 5:L-Block
+    // 6:T-Block
 
     // pieces: Array[7] holds Array[4][4]
     field Array pieces;
