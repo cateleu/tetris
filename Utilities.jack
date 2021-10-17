@@ -14,6 +14,14 @@ class Utilities {
         return;
     }
 
+    function void showScore(int score) {
+        do Output.moveCursor(10, 45);
+        do Output.printString("Score:");
+        do Output.moveCursor(10, 53);
+        do Output.printInt(score);
+        return;
+    }
+
     function void displayLabel(String label) {
         do Output.printString(label);
         do Output.println();

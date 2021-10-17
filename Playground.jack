@@ -6,18 +6,20 @@ class Playground {
     field int MAXCOL;
     field Tetromino tetromino;
     field int debugFlag;
+    field int score;
 
     constructor Playground new() {
         var int i, j;
         
+        let score = 0;
         let screenOffset = 10;
         let MAXROW = 16;
         let MAXCOL = 10;
         // MAXROW + 1 add all block for collide detection.
         let row = Array.new(MAXROW+1);
         let col = Array.new(MAXCOL);
-        
         let i = 0;
+        do Score.init();
         
         // Initialize the while playground value to be 0. (no block)
         while (i < MAXROW) {
@@ -44,6 +46,11 @@ class Playground {
 
     method void drawSideEdges() {
         do Graphics.drawBackgroundEdges();
+        return;
+    }
+
+    method void showScore() {
+        do Utilities.showScore(score);
         return;
     }
 
@@ -191,6 +198,8 @@ class Playground {
                 let dropToValue = tetromino.getRow() + currentRowIndex - 1;
                 // do Utilities.debugDisplayIntValue("DropTo", dropToValue);
                 do tetromino.dropTo(dropToValue);
+                let score = Score.scoreForDropFast(score, currentRowIndex);
+                do showScore();
                 return;
             }
         }
@@ -360,22 +369,14 @@ class Playground {
             let rowIndex = rowIndex - 1;
         }
 
-        //do Utilities.debugDisplayIntValue("collapseAtIndex", collapseAtIndex);
-        // while (collapseAtIndex > 0) {
-        //      do collapseAt(collapseAtIndex);
-        //      if (~isLineErased(collapseAtIndex)) {
-        //          let collapseAtIndex = -1;
-        //      }
-        //      // Note since collapse, the above dropped one level down.
-        //      // collapseAtIndex remains     
-        // }
-        // Checkpt Fix
-        
+        let score = Score.scoreForEraseLine(score, eraseLine);
+        do showScore();
+ 
         if (needCollapse > 0) {
             return collapseAtIndex;
         }
-        return -1;
-        
+
+        return -1;        
     }
 
     method int doCollapse(int collapseAtIndex) {
@@ -431,6 +432,7 @@ class Playground {
             let rowIndex = rowIndex - 1;
         }
         do drawSideEdges();
+        do showScore();
         return;
     }
 

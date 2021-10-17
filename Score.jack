@@ -1,0 +1,41 @@
+class Score {
+    static int ERASE1;
+    static int ERASE2;
+    static int ERASE3;
+    static int ERASE4;
+
+    constructor Score new() {
+        return this;
+    }
+
+    function void init() {
+        let ERASE1 = 40;
+        let ERASE2 = 100;
+        let ERASE3 = 300;
+        let ERASE4 = 1200;
+        return;
+    }
+
+    function int scoreForEraseLine (int score, int linesErased) {
+
+        if (linesErased = 1) {
+            let score = score + ERASE1;
+        }
+        if (linesErased = 2) {
+            let score = score + ERASE2;
+        }
+        if (linesErased = 3) {
+            let score = score + ERASE3;
+        }
+        if (linesErased = 4) {
+            let score = score + ERASE4;
+        }
+        return score;
+    }
+
+    function int scoreForDropFast(int score, int numberOfRowsDropped) {
+
+        let score = score + (2 * numberOfRowsDropped);
+        return score;
+    }
+}

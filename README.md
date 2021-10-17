@@ -9,16 +9,20 @@ Feb 28, 2021
 Compile:
 ./JackCompiler.sh Tetris
 
+Oct 17 In progress - TODO:show next tetrominos.
 In progress - TODO:separate runable unit test
 In progress - revise copyTwoDimensionArray functions.
-In Progress: Start: Oct 13
+
+
+Done:
+Oct 17, 2021:
+- add Score calculation.
+Oct 13, 2021 
 Tune control:
 - if keep rotating, piece move up!
 - press left/right the piece freeze in position
 - only freeze in position on the edge of touching a bottom piece before embed.
 
-Done:
-Oct 13, 2021 
 - Fixed right rotation.
 - Add 7 pieces rotation.
 - Tune control.
@@ -47,9 +51,6 @@ TODO:(Fixed? to confirm)fix Utilities.initialize
 TODO:cleanup unused/bad codes.
 
 TODO:global variable class for parameters.
-
-TODO:add score.
-TODO:show next tetrominos.
 TODO:speed increases as progress.
 TODO:randomize tetromino piece.
 
