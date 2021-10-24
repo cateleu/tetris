@@ -24,6 +24,7 @@ class TetrisGame {
         do playground.usePiece(tetromino);
         do playground.drawSideEdges();
         do playground.showScore();
+        do playground.showNextPiece();
 
         let direction = 0;
         let dropTimer = 0;

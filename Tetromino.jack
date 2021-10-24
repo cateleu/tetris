@@ -1,6 +1,8 @@
 class Tetromino {
     field TetrominoFactory factory;
     field int screenOffset; // offset to screen playground.
+    field int nextScreenOffset;
+
     field int maxSize; // 4 by 4 square.
     field int row, col;
     field int debugFlag;
@@ -9,17 +11,20 @@ class Tetromino {
     field int pieceNumber;
     field bool rotated;
 
+    field Array nextPiece;
+
      //TODO - to be remove debug
     field int randomIndex;
+    field int nextIndex;
 
     constructor Tetromino new(TetrominoFactory tetrominoFactory) {
         let factory = tetrominoFactory;
 
         let screenOffset = 10;
+        let nextScreenOffset = 260;
         let row = 0;        // row: [0-15]
         let col = 0;        // col: [0-9]
         let maxSize = 4;    // 4 by 4: [0-3] 
-
         do generate();
         return this;
     }
@@ -245,7 +250,15 @@ class Tetromino {
         } else {
             let randomIndex = randomIndex + 1;
         }
+
+        if (randomIndex > 5) {
+            let nextIndex = 0;
+        } else {
+            let nextIndex = randomIndex + 1;
+        }
+
         let piece = factory.getTetromino(randomIndex);
+        let nextPiece = factory.getTetromino(nextIndex);
         let rotated = false;
         let pieceNumber = randomIndex;
         let row = -1;
@@ -468,6 +481,56 @@ class Tetromino {
         return;
     }
 
+    method void drawNext(int row, int col) {
+        var int i, j, x, y, pos;
+        var Array value;
+
+        let i = 0;
+        let y = (row * 512);
+        let x = col + 35;
+        
+        while (i < 4) {
+            let j = 0;
+            let pos = 12;
+            let value = nextPiece[i];
+            while (j < 4) {
+                if (value[j] = 1) {
+                    do Graphics.drawBlock(y + (i * 512) + x + j);
+                }
+                let j = j + 1;
+            }
+            let i = i + 1;
+            
+        }
+        return;
+    }
+
+    method void eraseNext(int row, int col) {
+        var int i, j, x, y, pos;
+        var Array value;
+
+        let i = 0;
+        let y = (row * 512);
+        let x = col + 35;
+        
+        while (i < 4) {
+            let j = 0;
+            let pos = 12;
+            let value = piece[i];
+            while (j < 4) {
+                //if (value[j] = 1) {
+                    do Graphics.eraseBlock(y + (i * 512) + x + j);
+                //}
+                let j = j + 1;
+            }
+            let i = i + 1;
+            
+        }
+        return;
+    }
+
+    // row [0-15]
+    // col [0-9]
     method void draw(int row, int col) {
         var int i, j, x, y, 
             rowIndex,

@@ -54,6 +54,12 @@ class Playground {
         return;
     }
 
+    method void showNextPiece() {
+        do tetromino.eraseNext(2, 52);
+        do tetromino.drawNext(2, 52);
+        return;
+    }
+
     method void setDebugFlag(int flag) {
         let debugFlag = flag;
         return;
@@ -433,6 +439,7 @@ class Playground {
         }
         do drawSideEdges();
         do showScore();
+        do showNextPiece();
         return;
     }
 
