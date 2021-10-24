@@ -9,12 +9,13 @@ Feb 28, 2021
 Compile:
 ./JackCompiler.sh Tetris
 
-Oct 17 In progress - TODO:show next tetrominos.
 In progress - TODO:separate runable unit test
 In progress - revise copyTwoDimensionArray functions.
 
 
 Done:
+Oct 24, 2021:
+- show next piece.
 Oct 17, 2021:
 - add Score calculation.
 Oct 13, 2021 

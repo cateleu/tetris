@@ -55,8 +55,8 @@ class Playground {
     }
 
     method void showNextPiece() {
-        do tetromino.eraseNext(2, 52);
-        do tetromino.drawNext(2, 52);
+        do tetromino.eraseNext(2, 12);
+        do tetromino.drawNext(2, 12);
         return;
     }
 
